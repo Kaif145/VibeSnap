@@ -3,12 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Instagram Song Matcher</title>
+    <title>Moodify - Instagram Song Matcher</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
   </head>
   <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <span class="logo">🎵 Moodify</span>
+        <span class="tagline"
+          >Analyze photo mood & match the perfect song!</span
+        >
+      </div>
+    </header>
+
     <div class="container">
-      <h1>🎵 Song Matcher</h1>
+      <h1>Song Matcher</h1>
       <p class="subtitle">
         Upload your photo and get perfect song suggestions for Instagram!
       </p>
@@ -67,6 +81,31 @@
         <button class="btn try-again" onclick="resetForm()">Try Again</button>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <span>Built by Maxi</span>
+        <div class="social-links">
+          <a
+            href="https://www.instagram.com/maxiiiii.__/"
+            target="_blank"
+            class="social-icon"
+            aria-label="Instagram"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="https://github.com/kaif145"
+            target="_blank"
+            class="social-icon"
+            aria-label="GitHub"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+      </div>
+    </footer>
 
     <script src="script.js"></script>
   </body>

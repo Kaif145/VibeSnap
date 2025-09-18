@@ -1,4 +1,79 @@
- * {
+/* Reset & base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+/* ----- Header ----- */
+.header {
+  width: 100%;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  padding: 1rem 0;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+  margin-bottom: 2rem;
+}
+.header-content {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 0.3rem;
+}
+.tagline {
+  color: #f3f3f3;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* ----- Container ----- */
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto 2rem auto;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+/* ... (your existing styles for upload-area, buttons, form, spinner, results, etc. remain unchanged) ... */
+
+
+ /* * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -12,7 +87,7 @@
         align-items: center;
         justify-content: center;
         padding: 20px;
-      }
+      } */
 
       .container {
         background: white;
@@ -388,5 +463,169 @@
 
   .preview-image {
     max-height: 120px;
+  }
+}
+
+
+
+/* ----- Footer ----- */
+.footer {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1rem 0;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -4px 20px rgba(102, 126, 234, 0.08);
+  margin-top: auto;
+  position: relative;
+  bottom: 0;
+}
+.footer-content {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.footer span {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.social-links {
+  display: flex;
+  gap: 1.2rem;
+}
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  transition: background 0.2s;
+  color: inherit;
+}
+.social-icon.instagram:hover { background: #E1306C22; color: #E1306C; }
+.social-icon.twitter:hover { background: #1DA1F222; color: #1DA1F2; }
+.social-icon.github:hover { background: #33333322; color: #333; }
+
+/* --- Responsive Styles --- */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    flex-direction: column;
+  }
+
+  .header-content, .footer-content, .container {
+    max-width: 100%;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+    border-radius: 15px;
+
+  }
+
+
+  h1 {
+    font-size: 1.5rem;
+  }
+  .logo {
+    font-size: 1.4rem;
+  }
+  .tagline {
+    font-size: 0.9rem;
+  }
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .upload-area {
+    padding: 1.5rem;
+  }
+
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+  .btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  .preference-input {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  .song-title {
+    font-size: 1rem;
+  }
+  .song-mood,
+  .song-genre {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.6rem;
+  }
+  .play-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  .spotify-link {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+  }
+  .preview-image {
+    max-height: 150px;
+  }
+  .footer span {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3rem;
+  }
+  .logo {
+    font-size: 1.1rem;
+  }
+  .tagline {
+    font-size: 0.75rem;
+  }
+  .subtitle {
+    font-size: 0.8rem;
+  }
+  .upload-area {
+    padding: 1rem;
+  }
+  .upload-icon {
+    font-size: 2rem;
+  }
+  .btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+  }
+  .song-title {
+    font-size: 0.95rem;
+  }
+  .song-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .play-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+  .spotify-link {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .preview-image {
+    max-height: 120px;
+  }
+  .footer span {
+    font-size: 0.8rem;
   }
 }
