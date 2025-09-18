@@ -53,7 +53,7 @@ const form = document.getElementById("uploadForm");
         error.style.display = "none";
 
         try {
-          const response = await fetch("/upload", {
+          const response = await fetch('/api/upload', {
             method: "POST",
             body: formData,
           });
