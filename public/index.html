@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram Song Matcher</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎵 Song Matcher</h1>
+      <p class="subtitle">
+        Upload your photo and get perfect song suggestions for Instagram!
+      </p>
+
+      <form id="uploadForm" enctype="multipart/form-data">
+        <div
+          class="upload-area"
+          onclick="document.getElementById('fileInput').click()"
+        >
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">Click to upload your photo</div>
+          <div style="color: #999; font-size: 0.9rem">
+            JPG, PNG or JPEG (Max 5MB)
+          </div>
+          <input
+            type="file"
+            id="fileInput"
+            name="photo"
+            accept="image/*"
+            required
+          />
+          <img id="previewImage" class="preview-image" style="display: none" />
+        </div>
+
+        <input
+          type="text"
+          name="preference"
+          placeholder="Music preference (optional) - e.g. pop, chill, energetic..."
+          class="preference-input"
+        />
+
+        <button type="submit" class="btn" id="submitBtn">
+          🎶 Get Song Suggestions
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Analyzing your photo and finding perfect songs...</div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="description" id="description"></div>
+        <div id="songs"></div>
+        <button
+          class="btn"
+          onclick="resetForm()"
+          style="width: 100%; margin-top: 1rem"
+        >
+          📸 Try Another Photo
+        </button>
+      </div>
+
+      <div class="error" id="error" style="display: none">
+        <div id="errorMessage"></div>
+        <button class="btn try-again" onclick="resetForm()">Try Again</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
