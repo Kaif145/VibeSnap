@@ -1,4 +1,3 @@
-// middleware/errorHandler.js - Global error handling
 const fs = require("fs");
 
 const errorHandler = (error, req, res, next) => {

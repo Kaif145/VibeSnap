@@ -629,3 +629,195 @@ h1 {
     font-size: 0.8rem;
   }
 }
+
+
+
+
+/* Add these styles to your existing style.css */
+
+/* Enhanced song card layout */
+.song-header {
+  margin-bottom: 0.8rem;
+}
+
+.song-title {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+}
+
+.song-artist {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Clip suggestion styling */
+.clip-suggestion {
+  background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fd 100%);
+  padding: 1rem;
+  margin: 0.8rem 0;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
+}
+
+.clip-suggestion:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+}
+
+.clip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.clip-header i {
+  font-size: 1rem;
+}
+
+.clip-time {
+  background: #667eea;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.clip-duration {
+  color: #555;
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+.clip-section {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.clip-section strong {
+  color: #667eea;
+}
+
+/* Enhanced Spotify link */
+.spotify-link {
+  background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+  color: white;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(29, 185, 84, 0.2);
+}
+
+.spotify-link:hover {
+  background: linear-gradient(135deg, #1ed760 0%, #17c653 100%);
+  text-decoration: none;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-link i {
+  font-size: 1.1rem;
+}
+
+/* Language tag for notes */
+.song-language {
+  background: #ff6b6b;
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Enhanced song info tags */
+.song-info {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.song-mood,
+.song-genre {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+/* Responsive design */
+@media (max-width: 768px) {
+  .clip-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+  
+  .song-info {
+    gap: 0.5rem;
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .spotify-link {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Animation for new results */
+.song {
+  animation: slideInUp 0.5s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Stagger animation for multiple songs */
+.song:nth-child(1) { animation-delay: 0.1s; }
+.song:nth-child(2) { animation-delay: 0.2s; }
+.song:nth-child(3) { animation-delay: 0.3s; }
+.song:nth-child(4) { animation-delay: 0.4s; }
+.song:nth-child(5) { animation-delay: 0.5s; }

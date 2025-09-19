@@ -17,4 +17,28 @@ router.get("/stats",
   HealthController.getStats
 );
 
+
+// Add to your routes/health.js
+router.get("/api-usage", async (req, res) => {
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/auth/key', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`
+      }
+    });
+    
+    const data = await response.json();
+    res.json({
+      usage: data.usage,
+      limit: data.limit,
+      remaining: data.limit - data.usage
+    });
+  } catch (error) {
+    res.json({ error: 'Could not fetch usage data' });
+  }
+});
+
+
+
 module.exports = router;

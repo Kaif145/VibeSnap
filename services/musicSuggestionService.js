@@ -46,34 +46,85 @@ Based on this photo's specific mood, energy, and aesthetic, suggest 5 PERFECT so
 
 IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, etc.
 
-Return ONLY this JSON format:
+🎯 CRITICAL: For each song, suggest the PERFECT 15-30 second clip that matches this photo:
+- Opening hook (0:00-0:30) for immediate impact
+- First chorus (usually 0:45-1:15) for catchiness  
+- Bridge section (usually 2:00-2:30) for emotional moments
+- Final chorus (usually 2:30-3:00) for big energy
+
+RESPONSE FORMAT - Return ONLY valid JSON, no markdown, no explanations, no extra text:
+
 [
   {
-    "title": "Exact Song Title",
+    "title": "Song Title",
     "artist": "Artist Name", 
-    "mood": "specific mood that matches photo",
-    "reason": "Explain WHY this song perfectly matches the photo's specific elements",
-    "genre": "genre"
+    "mood": "specific mood",
+    "reason": "Why this matches the photo",
+    "genre": "genre",
+    "best_clip": {
+      "start_time": "1:23",
+      "end_time": "1:38", 
+      "duration": "15 seconds",
+      "section": "chorus",
+      "why_perfect": "Why this clip is perfect"
+    }
   }
 ]
 
-Focus on current popular songs that Instagram users actually use. No extra text, just valid JSON.`;
+CRITICAL: Start your response with [ and end with ]. Do not include any text before or after the JSON array.`;
   }
 
   static parseResponse(response) {
+    console.log('Raw response to parse:', response.substring(0, 200) + '...');
+    
     try {
+      // First try direct JSON parse
       return JSON.parse(response);
-    } catch {
+    } catch (firstError) {
+      console.log('Direct parse failed, trying to extract JSON...');
+      
       try {
-        const jsonMatch = response.match(/\[[\s\S]*?\]/);
-        if (jsonMatch) {
-          return JSON.parse(jsonMatch[0]);
+        // Clean the response - remove markdown formatting
+        let cleanedResponse = response
+          .replace(/```json/g, '')
+          .replace(/```/g, '')
+          .trim();
+        
+        // Try parsing cleaned response
+        return JSON.parse(cleanedResponse);
+      } catch (secondError) {
+        console.log('Cleaned parse failed, trying regex extraction...');
+        
+        try {
+          // Look for JSON array in the text
+          const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]);
+          }
+        } catch (thirdError) {
+          console.log('Regex extraction failed, trying manual parsing...');
+          
+          try {
+            // Manual parsing for common AI response patterns
+            const lines = response.split('\n');
+            const jsonStart = lines.findIndex(line => line.trim().startsWith('['));
+            const jsonEnd = lines.findIndex((line, index) => index > jsonStart && line.trim().endsWith(']'));
+            
+            if (jsonStart !== -1 && jsonEnd !== -1) {
+              const jsonLines = lines.slice(jsonStart, jsonEnd + 1);
+              const jsonString = jsonLines.join('\n');
+              return JSON.parse(jsonString);
+            }
+          } catch (manualError) {
+            console.error('All parsing attempts failed');
+            console.error('Original response:', response);
+          }
         }
-      } catch {
-        console.warn('Could not parse music suggestion response');
       }
-      throw new Error('Could not parse JSON response');
     }
+    
+    // If all parsing fails, throw the error
+    throw new Error('Could not parse JSON response after multiple attempts');
   }
 
   static async addSpotifyLinks(suggestions) {
@@ -91,15 +142,81 @@ Focus on current popular songs that Instagram users actually use. No extra text,
   static getFallbackSuggestions(description) {
     const desc = description.toLowerCase();
     
+    // Add enhanced fallbacks with clip suggestions
+    const enhancedFallbacks = {
+      chill: [
+        {
+          "title": "Good Days",
+          "artist": "SZA",
+          "mood": "chill",
+          "reason": "Perfect for relaxed, cozy vibes with warm atmosphere",
+          "genre": "R&B",
+          "best_clip": {
+            "start_time": "1:05",
+            "end_time": "1:25", 
+            "duration": "20 seconds",
+            "section": "chorus",
+            "why_perfect": "The chorus perfectly captures the relaxed, confident energy of your photo"
+          }
+        }
+      ],
+      energetic: [
+        {
+          "title": "Levitating",
+          "artist": "Dua Lipa", 
+          "mood": "energetic",
+          "reason": "High energy matches the vibrant, dynamic atmosphere",
+          "genre": "pop",
+          "best_clip": {
+            "start_time": "1:12",
+            "end_time": "1:27",
+            "duration": "15 seconds",
+            "section": "chorus", 
+            "why_perfect": "The main chorus has explosive energy that perfectly matches your vibrant photo"
+          }
+        }
+      ],
+      default: [
+        {
+          "title": "As It Was",
+          "artist": "Harry Styles",
+          "mood": "nostalgic",
+          "reason": "Versatile song that works with most Instagram aesthetics",
+          "genre": "pop",
+          "best_clip": {
+            "start_time": "1:15",
+            "end_time": "1:30",
+            "duration": "15 seconds",
+            "section": "chorus",
+            "why_perfect": "The emotional chorus section creates perfect nostalgic connection with your photo"
+          }
+        },
+        {
+          "title": "Anti-Hero",
+          "artist": "Taylor Swift",
+          "mood": "relatable",
+          "reason": "Popular choice for authentic, personal Instagram posts", 
+          "genre": "pop",
+          "best_clip": {
+            "start_time": "0:55",
+            "end_time": "1:10",
+            "duration": "15 seconds",
+            "section": "pre-chorus",
+            "why_perfect": "This section has the perfect relatable, authentic energy for your personal photo"
+          }
+        }
+      ]
+    };
+    
     if (desc.includes('chill') || desc.includes('cozy') || desc.includes('relaxed')) {
-      return FALLBACK_SONGS.chill;
+      return enhancedFallbacks.chill;
     } else if (desc.includes('energetic') || desc.includes('vibrant') || desc.includes('bright')) {
-      return FALLBACK_SONGS.energetic;
+      return enhancedFallbacks.energetic;
     } else if (desc.includes('outdoor') || desc.includes('nature') || desc.includes('beach')) {
       return FALLBACK_SONGS.outdoor;
     }
     
-    return FALLBACK_SONGS.default;
+    return enhancedFallbacks.default;
   }
 }
 
