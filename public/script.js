@@ -72,10 +72,30 @@ form.addEventListener("submit", async (e) => {
   loading.style.display = "none";
 });
 
-// Display results with enhanced clip suggestions
+// Display results with uploaded photo and collapsible analysis
 function displayResults(data) {
-  document.getElementById("description").innerHTML = 
-    `<strong>Photo Analysis:</strong><br>${data.description}`;
+  // Create photo display section
+  const photoSection = data.uploadedPhoto ? `
+    <div class="uploaded-photo-section">
+      <h3>Your Photo:</h3>
+      <img src="${data.uploadedPhoto}" alt="Uploaded photo" class="uploaded-photo" />
+    </div>
+  ` : '';
+
+  // Create collapsible analysis section
+  const analysisSection = `
+    <div class="analysis-toggle-section">
+      <button class="analysis-toggle-btn" onclick="toggleAnalysis()">
+        <i class="fas fa-eye" id="analysisIcon"></i>
+        <span id="analysisButtonText">View Photo Analysis</span>
+      </button>
+      <div class="analysis-content" id="analysisContent" style="display: none;">
+        <div class="analysis-text">${data.description}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("description").innerHTML = `${photoSection}${analysisSection}`;
 
   const songsHTML = data.suggestions
     .map((song) => `
@@ -93,16 +113,9 @@ function displayResults(data) {
         <div class="song-reason">${song.reason}</div>
         
         ${song.best_clip ? `
-          <div class="clip-suggestion">
-            <div class="clip-header">
-              <i class="fas fa-clock"></i>
-              <span class="clip-time">${song.best_clip.start_time} - ${song.best_clip.end_time}</span>
-              <span class="clip-duration">(${song.best_clip.duration})</span>
-            </div>
-            <div class="clip-section">
-              <strong>${song.best_clip.section.charAt(0).toUpperCase() + song.best_clip.section.slice(1)}:</strong>
-              ${song.best_clip.why_perfect}
-            </div>
+          <div class="clip-suggestion-compact">
+            <div class="clip-time-badge">${song.best_clip.start_time} - ${song.best_clip.end_time}</div>
+            <div class="clip-description">${song.best_clip.section}: ${song.best_clip.why_perfect}</div>
           </div>
         ` : ''}
         
@@ -118,6 +131,23 @@ function displayResults(data) {
 
   document.getElementById("songs").innerHTML = songsHTML;
   results.style.display = "block";
+}
+
+// Toggle analysis visibility
+function toggleAnalysis() {
+  const content = document.getElementById('analysisContent');
+  const icon = document.getElementById('analysisIcon');
+  const buttonText = document.getElementById('analysisButtonText');
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    icon.className = 'fas fa-eye-slash';
+    buttonText.textContent = 'Hide Photo Analysis';
+  } else {
+    content.style.display = 'none';
+    icon.className = 'fas fa-eye';
+    buttonText.textContent = 'View Photo Analysis';
+  }
 }
 
 // Error handling
@@ -279,4 +309,3 @@ displayResults = function(data) {
   originalDisplayResults(data);
   setTimeout(scrollToResults, 100);
 };
-
