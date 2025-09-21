@@ -166,146 +166,146 @@ function resetForm() {
 }
 
 // Instagram Notes functionality
-function showMoodForm() {
-  document.getElementById('moodForm').style.display = 'block';
-  document.getElementById('notesResults').style.display = 'none';
-  document.getElementById('notesError').style.display = 'none';
-  document.getElementById('moodInput').focus();
-}
+// function showMoodForm() {
+//   document.getElementById('moodForm').style.display = 'block';
+//   document.getElementById('notesResults').style.display = 'none';
+//   document.getElementById('notesError').style.display = 'none';
+//   document.getElementById('moodInput').focus();
+// }
 
-async function getMoodSongs() {
-  const mood = document.getElementById('moodInput').value.trim();
-  const language = document.querySelector('input[name="language"]:checked').value;
+// async function getMoodSongs() {
+//   const mood = document.getElementById('moodInput').value.trim();
+//   const language = document.querySelector('input[name="language"]:checked').value;
 
-  if (!mood) {
-    alert('Please tell us how you\'re feeling!');
-    return;
-  }
+//   if (!mood) {
+//     alert('Please tell us how you\'re feeling!');
+//     return;
+//   }
 
-  showNotesLoading();
+//   showNotesLoading();
 
-  try {
-    const response = await fetch('/api/notes/mood', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ mood, language })
-    });
+//   try {
+//     const response = await fetch('/api/notes/mood', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ mood, language })
+//     });
 
-    const data = await response.json();
+//     const data = await response.json();
 
-    if (data.success) {
-      displayNotesResults(data, `Songs for when you're feeling: "${mood}"`);
-    } else {
-      showNotesError(data.error || 'Could not get song suggestions');
-    }
-  } catch (err) {
-    showNotesError('Network error. Please try again.');
-  }
+//     if (data.success) {
+//       displayNotesResults(data, `Songs for when you're feeling: "${mood}"`);
+//     } else {
+//       showNotesError(data.error || 'Could not get song suggestions');
+//     }
+//   } catch (err) {
+//     showNotesError('Network error. Please try again.');
+//   }
 
-  hideNotesLoading();
-}
+//   hideNotesLoading();
+// }
 
-async function getTrendingSongs() {
-  const language = 'mixed';
+// async function getTrendingSongs() {
+//   const language = 'mixed';
 
-  showNotesLoading();
+//   showNotesLoading();
 
-  try {
-    const response = await fetch(`/api/notes/trending?language=${language}`);
-    const data = await response.json();
+//   try {
+//     const response = await fetch(`/api/notes/trending?language=${language}`);
+//     const data = await response.json();
 
-    if (data.success) {
-      displayNotesResults(data, "🔥 Trending Instagram Notes Songs");
-    } else {
-      showNotesError(data.error || 'Could not get trending songs');
-    }
-  } catch (err) {
-    showNotesError('Network error. Please try again.');
-  }
+//     if (data.success) {
+//       displayNotesResults(data, "🔥 Trending Instagram Notes Songs");
+//     } else {
+//       showNotesError(data.error || 'Could not get trending songs');
+//     }
+//   } catch (err) {
+//     showNotesError('Network error. Please try again.');
+//   }
 
-  hideNotesLoading();
-}
+//   hideNotesLoading();
+// }
 
-function displayNotesResults(data, title) {
-  document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram Notes!`;
+// function displayNotesResults(data, title) {
+//   document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram Notes!`;
   
-  const songsHTML = data.suggestions.map((song) => `
-    <div class="song">
-      <div class="song-header">
-        <div class="song-title">${song.title}</div>
-        <div class="song-artist">by ${song.artist}</div>
-      </div>
+//   const songsHTML = data.suggestions.map((song) => `
+//     <div class="song">
+//       <div class="song-header">
+//         <div class="song-title">${song.title}</div>
+//         <div class="song-artist">by ${song.artist}</div>
+//       </div>
       
-      <div class="song-info">
-        <span class="song-mood">${song.mood}</span>
-        <span class="song-genre">${song.genre}</span>
-        ${song.language ? `<span class="song-language">${song.language}</span>` : ''}
-      </div>
+//       <div class="song-info">
+//         <span class="song-mood">${song.mood}</span>
+//         <span class="song-genre">${song.genre}</span>
+//         ${song.language ? `<span class="song-language">${song.language}</span>` : ''}
+//       </div>
       
-      <div class="song-reason">${song.reason}</div>
+//       <div class="song-reason">${song.reason}</div>
       
-      ${song.best_clip ? `
-        <div class="clip-suggestion">
-          <div class="clip-header">
-            <i class="fas fa-clock"></i>
-            <span class="clip-time">${song.best_clip.start_time} - ${song.best_clip.end_time}</span>
-            <span class="clip-duration">(${song.best_clip.duration})</span>
-          </div>
-          <div class="clip-section">
-            <strong>${song.best_clip.section.charAt(0).toUpperCase() + song.best_clip.section.slice(1)}:</strong>
-            ${song.best_clip.why_perfect}
-          </div>
-        </div>
-      ` : ''}
+//       ${song.best_clip ? `
+//         <div class="clip-suggestion">
+//           <div class="clip-header">
+//             <i class="fas fa-clock"></i>
+//             <span class="clip-time">${song.best_clip.start_time} - ${song.best_clip.end_time}</span>
+//             <span class="clip-duration">(${song.best_clip.duration})</span>
+//           </div>
+//           <div class="clip-section">
+//             <strong>${song.best_clip.section.charAt(0).toUpperCase() + song.best_clip.section.slice(1)}:</strong>
+//             ${song.best_clip.why_perfect}
+//           </div>
+//         </div>
+//       ` : ''}
       
-      <div class="song-controls">
-        <a href="${song.spotify_url}" target="_blank" class="spotify-link">
-          <i class="fab fa-spotify"></i>
-          Open in Spotify
-        </a>
-      </div>
-    </div>
-  `).join('');
+//       <div class="song-controls">
+//         <a href="${song.spotify_url}" target="_blank" class="spotify-link">
+//           <i class="fab fa-spotify"></i>
+//           Open in Spotify
+//         </a>
+//       </div>
+//     </div>
+//   `).join('');
   
-  document.getElementById('notesSongs').innerHTML = songsHTML;
-  document.getElementById('notesResults').style.display = 'block';
-}
+//   document.getElementById('notesSongs').innerHTML = songsHTML;
+//   document.getElementById('notesResults').style.display = 'block';
+// }
 
-function showNotesLoading() {
-  document.getElementById('moodForm').style.display = 'none';
-  document.getElementById('notesLoading').style.display = 'block';
-  document.getElementById('notesResults').style.display = 'none';
-  document.getElementById('notesError').style.display = 'none';
-}
+// function showNotesLoading() {
+//   document.getElementById('moodForm').style.display = 'none';
+//   document.getElementById('notesLoading').style.display = 'block';
+//   document.getElementById('notesResults').style.display = 'none';
+//   document.getElementById('notesError').style.display = 'none';
+// }
 
-function hideNotesLoading() {
-  document.getElementById('notesLoading').style.display = 'none';
-}
+// function hideNotesLoading() {
+//   document.getElementById('notesLoading').style.display = 'none';
+// }
 
-function showNotesError(message) {
-  document.getElementById('notesErrorMessage').textContent = message;
-  document.getElementById('notesError').style.display = 'block';
-}
+// function showNotesError(message) {
+//   document.getElementById('notesErrorMessage').textContent = message;
+//   document.getElementById('notesError').style.display = 'block';
+// }
 
-function resetNotesForm() {
-  document.getElementById('moodForm').style.display = 'block';
-  document.getElementById('notesResults').style.display = 'none';
-  document.getElementById('notesError').style.display = 'none';
-  document.getElementById('moodInput').value = '';
-}
+// function resetNotesForm() {
+//   document.getElementById('moodForm').style.display = 'block';
+//   document.getElementById('notesResults').style.display = 'none';
+//   document.getElementById('notesError').style.display = 'none';
+//   document.getElementById('moodInput').value = '';
+// }
 
-// Smooth scrolling for better UX
-function scrollToResults() {
-  document.getElementById('results').scrollIntoView({ 
-    behavior: 'smooth' 
-  });
-}
+// // Smooth scrolling for better UX
+// function scrollToResults() {
+//   document.getElementById('results').scrollIntoView({ 
+//     behavior: 'smooth' 
+//   });
+// }
 
-// Add scroll to results after displaying them
-const originalDisplayResults = displayResults;
-displayResults = function(data) {
-  originalDisplayResults(data);
-  setTimeout(scrollToResults, 100);
-};
+// // Add scroll to results after displaying them
+// const originalDisplayResults = displayResults;
+// displayResults = function(data) {
+//   originalDisplayResults(data);
+//   setTimeout(scrollToResults, 100);
+// };

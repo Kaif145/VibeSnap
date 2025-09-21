@@ -44,7 +44,7 @@ Based on this photo's specific mood, energy, and aesthetic, suggest 5 PERFECT so
 ✅ Fit the Instagram aesthetic shown
 ✅ Appeal to the target demographic
 
-IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, etc.
+IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, If the photo is calm, avoid high-energy clips. If it’s vibrant, avoid slow intros. Clip should be Instagram-friendly: catchy, short, and emotionally resonant, etc.
 
 🎯 CRITICAL: For each song, suggest the PERFECT 15-30 second clip that matches this photo:
 - Opening hook (0:00-0:30) for immediate impact

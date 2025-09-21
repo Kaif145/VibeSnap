@@ -1,113 +1,172 @@
-// services/analyticsService.js - Simple analytics tracking
-const fs = require('fs');
-const path = require('path');
+// services/analyticsService.js - MongoDB analytics tracking
+const { MongoClient } = require('mongodb');
 
 class AnalyticsService {
-  static getAnalyticsFilePath() {
-    return path.join(__dirname, '../analytics.json');
-  }
-
-  static loadAnalytics() {
+  static async getDatabase() {
     try {
-      const filePath = this.getAnalyticsFilePath();
-      if (fs.existsSync(filePath)) {
-        const data = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(data);
-      }
+      const client = new MongoClient(process.env.MONGODB_URI);
+      await client.connect();
+      return client.db('vibesnap_analytics');
     } catch (error) {
-      console.error('Error loading analytics:', error);
+      console.error('MongoDB connection error:', error);
+      throw error;
     }
-    
-    // Return default structure if file doesn't exist or error
-    return {
-      totalUploads: 0,
-      dailyStats: {},
-      photoTypes: {
-        indoor: 0,
-        outdoor: 0,
-        selfie: 0,
-        group: 0,
-        other: 0
-      },
-      moods: {
-        energetic: 0,
-        chill: 0,
-        romantic: 0,
-        confident: 0,
-        melancholic: 0,
-        other: 0
-      },
-      preferences: {
-        pop: 0,
-        hip_hop: 0,
-        indie: 0,
-        electronic: 0,
-        rock: 0,
-        other: 0
-      },
-      languages: {
-        english: 0,
-        hindi: 0,
-        mixed: 0
-      },
-      timeOfDay: {
-        morning: 0,
-        afternoon: 0,
-        evening: 0,
-        night: 0
-      },
-      lastUpdated: new Date().toISOString()
-    };
   }
 
-  static saveAnalytics(data) {
+  static async trackPhotoUpload(description, preference, language = 'mixed', userAgent = '', ip = '') {
     try {
-      const filePath = this.getAnalyticsFilePath();
-      data.lastUpdated = new Date().toISOString();
-      fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+      const db = await this.getDatabase();
+      const collection = db.collection('photo_uploads');
+      
+      const uploadData = {
+        timestamp: new Date(),
+        date: new Date().toISOString().split('T')[0],
+        hour: new Date().getHours(),
+        description,
+        preference: preference || null,
+        language: language.toLowerCase(),
+        photoType: this.detectPhotoType(description),
+        mood: this.detectMood(description),
+        preferenceCategory: preference ? this.categorizePreference(preference) : null,
+        timeOfDay: this.getTimeCategory(new Date().getHours()),
+        userAgent: userAgent.substring(0, 200), // Limit length
+        ipHash: this.hashIP(ip), // Store hashed IP for privacy
+        processingSuccess: true
+      };
+      
+      await collection.insertOne(uploadData);
+      
+      // Also update daily summary
+      await this.updateDailySummary(db, uploadData.date);
+      
+      console.log('📊 Analytics saved to MongoDB');
     } catch (error) {
-      console.error('Error saving analytics:', error);
+      console.error('Analytics tracking error:', error);
+      // Don't throw error - analytics shouldn't break the main app
     }
   }
 
-  static trackPhotoUpload(description, preference, language = 'mixed') {
-    const analytics = this.loadAnalytics();
-    const today = new Date().toISOString().split('T')[0];
-    const hour = new Date().getHours();
+  static async updateDailySummary(db, date) {
+    const summaryCollection = db.collection('daily_summaries');
     
-    // Increment total uploads
-    analytics.totalUploads++;
-    
-    // Track daily stats
-    if (!analytics.dailyStats[today]) {
-      analytics.dailyStats[today] = 0;
+    await summaryCollection.updateOne(
+      { date },
+      {
+        $inc: { totalUploads: 1 },
+        $set: { lastUpdated: new Date() }
+      },
+      { upsert: true }
+    );
+  }
+
+  static async getAnalytics() {
+    try {
+      const db = await this.getDatabase();
+      const uploadsCollection = db.collection('photo_uploads');
+      
+      // Get total uploads
+      const totalUploads = await uploadsCollection.countDocuments();
+      
+      // Get last 30 days data
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      // Aggregate data
+      const [
+        photoTypes,
+        moods,
+        preferences,
+        languages,
+        timeOfDay,
+        dailyStats
+      ] = await Promise.all([
+        this.aggregateField(uploadsCollection, 'photoType'),
+        this.aggregateField(uploadsCollection, 'mood'),
+        this.aggregateField(uploadsCollection, 'preferenceCategory'),
+        this.aggregateField(uploadsCollection, 'language'),
+        this.aggregateField(uploadsCollection, 'timeOfDay'),
+        this.getDailyStats(uploadsCollection, 30)
+      ]);
+      
+      return {
+        totalUploads,
+        photoTypes: this.formatAggregation(photoTypes),
+        moods: this.formatAggregation(moods),
+        preferences: this.formatAggregation(preferences),
+        languages: this.formatAggregation(languages),
+        timeOfDay: this.formatAggregation(timeOfDay),
+        dailyStats,
+        insights: {
+          last7Days: await this.getDailyStats(uploadsCollection, 7),
+          topMood: this.getTopFromAggregation(moods),
+          topPhotoType: this.getTopFromAggregation(photoTypes),
+          topPreference: this.getTopFromAggregation(preferences),
+          avgUploadsPerDay: await this.getAverageUploadsPerDay(uploadsCollection)
+        },
+        lastUpdated: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('Get analytics error:', error);
+      throw error;
     }
-    analytics.dailyStats[today]++;
+  }
+
+  static async aggregateField(collection, fieldName) {
+    return await collection.aggregate([
+      { $match: { [fieldName]: { $exists: true, $ne: null } } },
+      { $group: { _id: `${fieldName}`, count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]).toArray();
+  }
+
+  static async getDailyStats(collection, days) {
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - days);
     
-    // Analyze photo type from description
-    const photoType = this.detectPhotoType(description);
-    analytics.photoTypes[photoType]++;
+    const dailyData = await collection.aggregate([
+      { $match: { timestamp: { $gte: daysAgo } } },
+      { $group: { _id: '$date', uploads: { $sum: 1 } } },
+      { $sort: { _id: 1 } }
+    ]).toArray();
     
-    // Analyze mood from description
-    const mood = this.detectMood(description);
-    analytics.moods[mood]++;
-    
-    // Track music preference
-    if (preference) {
-      const prefCategory = this.categorizePreference(preference);
-      analytics.preferences[prefCategory]++;
+    // Fill in missing days with 0
+    const result = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const dayData = dailyData.find(d => d._id === dateStr);
+      result.push({
+        date: dateStr,
+        uploads: dayData ? dayData.uploads : 0
+      });
     }
     
-    // Track language preference
-    analytics.languages[language.toLowerCase()]++;
+    return result;
+  }
+
+  static async getAverageUploadsPerDay(collection) {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    // Track time of day
-    const timeCategory = this.getTimeCategory(hour);
-    analytics.timeOfDay[timeCategory]++;
+    const totalUploads = await collection.countDocuments({
+      timestamp: { $gte: thirtyDaysAgo }
+    });
     
-    this.saveAnalytics(analytics);
-    
-    console.log(`📊 Analytics updated - Total uploads: ${analytics.totalUploads}`);
+    return Math.round(totalUploads / 30 * 10) / 10;
+  }
+
+  static formatAggregation(aggregation) {
+    const result = {};
+    aggregation.forEach(item => {
+      result[item._id] = item.count;
+    });
+    return result;
+  }
+
+  static getTopFromAggregation(aggregation) {
+    return aggregation.length > 0 ? aggregation[0]._id : 'unknown';
   }
 
   static detectPhotoType(description) {
@@ -163,52 +222,16 @@ class AnalyticsService {
     return 'night';
   }
 
-  static getAnalytics() {
-    const analytics = this.loadAnalytics();
-    
-    // Calculate additional insights
-    const last7Days = this.getLast7DaysStats(analytics.dailyStats);
-    const topMood = this.getTopCategory(analytics.moods);
-    const topPhotoType = this.getTopCategory(analytics.photoTypes);
-    const topPreference = this.getTopCategory(analytics.preferences);
-    
-    return {
-      ...analytics,
-      insights: {
-        last7Days,
-        topMood,
-        topPhotoType,
-        topPreference,
-        avgUploadsPerDay: this.getAverageUploadsPerDay(analytics.dailyStats)
-      }
-    };
-  }
-
-  static getLast7DaysStats(dailyStats) {
-    const last7Days = [];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      last7Days.push({
-        date: dateStr,
-        uploads: dailyStats[dateStr] || 0
-      });
+  static hashIP(ip) {
+    // Simple hash for privacy - don't store actual IPs
+    if (!ip) return null;
+    let hash = 0;
+    for (let i = 0; i < ip.length; i++) {
+      const char = ip.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
     }
-    return last7Days;
-  }
-
-  static getTopCategory(categories) {
-    return Object.entries(categories)
-      .sort(([,a], [,b]) => b - a)[0][0];
-  }
-
-  static getAverageUploadsPerDay(dailyStats) {
-    const days = Object.keys(dailyStats);
-    if (days.length === 0) return 0;
-    
-    const totalUploads = Object.values(dailyStats).reduce((sum, count) => sum + count, 0);
-    return Math.round(totalUploads / days.length * 10) / 10;
+    return hash.toString();
   }
 }
 

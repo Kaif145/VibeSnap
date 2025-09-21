@@ -25,8 +25,10 @@ class UploadController {
       const suggestions = await MusicSuggestionService.getSuggestionsWithLinks(description, preference);
       console.log(`🎵 Generated ${suggestions.length} suggestions with Spotify links`);
 
-      // Step 3: Track analytics (anonymous data only)
-      AnalyticsService.trackPhotoUpload(description, preference, 'mixed');
+      // Step 3: Track analytics (permanent MongoDB storage)
+      const userAgent = req.get('User-Agent') || '';
+      const ip = req.ip || req.connection.remoteAddress || '';
+      await AnalyticsService.trackPhotoUpload(description, preference, 'mixed', userAgent, ip);
 
       // Clean up uploaded file
       fs.unlink(file.path, (err) => {
