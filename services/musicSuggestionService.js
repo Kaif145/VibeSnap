@@ -44,7 +44,7 @@ Based on this photo's specific mood, energy, and aesthetic, suggest 5 PERFECT so
 ✅ Fit the Instagram aesthetic shown
 ✅ Appeal to the target demographic
 
-IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, If the photo is calm, avoid high-energy clips. If it’s vibrant, avoid slow intros. Clip should be Instagram-friendly: catchy, short, and emotionally resonant, etc.
+IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, etc.
 
 🎯 CRITICAL: For each song, suggest the PERFECT 15-30 second clip that matches this photo:
 - Opening hook (0:00-0:30) for immediate impact
@@ -81,40 +81,51 @@ CRITICAL: Start your response with [ and end with ]. Do not include any text bef
       // First try direct JSON parse
       return JSON.parse(response);
     } catch (firstError) {
-      console.log('Direct parse failed, trying to extract JSON...');
+      console.log('Direct parse failed, trying to clean trailing commas...');
       
       try {
-        // Clean the response - remove markdown formatting
+        // Clean the response - remove trailing commas and markdown
         let cleanedResponse = response
           .replace(/```json/g, '')
           .replace(/```/g, '')
+          .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas before } or ]
           .trim();
         
-        // Try parsing cleaned response
+        console.log('Cleaned response:', cleanedResponse.substring(0, 200) + '...');
         return JSON.parse(cleanedResponse);
+        
       } catch (secondError) {
         console.log('Cleaned parse failed, trying regex extraction...');
         
         try {
           // Look for JSON array in the text
-          const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+          const jsonMatch = response.match(/\[[\s\S]*\]/);
           if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
+            let extractedJson = jsonMatch[0]
+              .replace(/,(\s*[}\]])/g, '$1'); // Remove trailing commas
+            
+            console.log('Extracted JSON:', extractedJson.substring(0, 200) + '...');
+            return JSON.parse(extractedJson);
           }
         } catch (thirdError) {
-          console.log('Regex extraction failed, trying manual parsing...');
+          console.log('Regex extraction failed, trying manual fix...');
           
           try {
-            // Manual parsing for common AI response patterns
-            const lines = response.split('\n');
-            const jsonStart = lines.findIndex(line => line.trim().startsWith('['));
-            const jsonEnd = lines.findIndex((line, index) => index > jsonStart && line.trim().endsWith(']'));
+            // More aggressive comma cleaning
+            let manualClean = response
+              .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+              .replace(/,\s*,/g, ',') // Remove double commas
+              .replace(/\n/g, ' ') // Remove newlines
+              .replace(/\s+/g, ' ') // Normalize spaces
+              .trim();
             
-            if (jsonStart !== -1 && jsonEnd !== -1) {
-              const jsonLines = lines.slice(jsonStart, jsonEnd + 1);
-              const jsonString = jsonLines.join('\n');
-              return JSON.parse(jsonString);
+            // Extract just the array part
+            const arrayMatch = manualClean.match(/\[.*\]/);
+            if (arrayMatch) {
+              console.log('Manual clean attempt:', arrayMatch[0].substring(0, 200) + '...');
+              return JSON.parse(arrayMatch[0]);
             }
+            
           } catch (manualError) {
             console.error('All parsing attempts failed');
             console.error('Original response:', response);

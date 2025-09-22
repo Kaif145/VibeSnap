@@ -112,12 +112,7 @@ function displayResults(data) {
         
         <div class="song-reason">${song.reason}</div>
         
-        ${song.best_clip ? `
-          <div class="clip-suggestion-compact">
-            <div class="clip-time-badge">${song.best_clip.start_time} - ${song.best_clip.end_time}</div>
-            <div class="clip-description">${song.best_clip.section}: ${song.best_clip.why_perfect}</div>
-          </div>
-        ` : ''}
+       
         
         <div class="song-controls">
           <a href="${song.spotify_url}" target="_blank" class="spotify-link" aria-label="Open ${song.title} in Spotify">
