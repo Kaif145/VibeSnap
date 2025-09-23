@@ -15,7 +15,7 @@ const fs = require("fs");
 // Import routes
 const uploadRoutes = require("./routes/upload");
 const healthRoutes = require("./routes/health");
-// const notesRoutes = require("./routes/notes");
+const notesRoutes = require("./routes/notes");
 const analyticsRoutes = require("./routes/analytics");
 
 // Import middleware
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routes
 app.use("/api", uploadRoutes);
 app.use("/api", healthRoutes);
-// app.use("/api", notesRoutes);
+app.use("/api", notesRoutes);
 app.use("/api", analyticsRoutes);
 
 // Serve main page

@@ -46,12 +46,6 @@ Based on this photo's specific mood, energy, and aesthetic, suggest 5 PERFECT so
 
 IMPORTANT: Consider the specific details in the photo analysis - if it mentions "cozy vibes" suggest chill songs, if "energetic atmosphere" suggest upbeat tracks, etc.
 
-🎯 CRITICAL: For each song, suggest the PERFECT 15-30 second clip that matches this photo:
-- Opening hook (0:00-0:30) for immediate impact
-- First chorus (usually 0:45-1:15) for catchiness  
-- Bridge section (usually 2:00-2:30) for emotional moments
-- Final chorus (usually 2:30-3:00) for big energy
-
 RESPONSE FORMAT - Return ONLY valid JSON, no markdown, no explanations, no extra text:
 
 [
@@ -60,14 +54,8 @@ RESPONSE FORMAT - Return ONLY valid JSON, no markdown, no explanations, no extra
     "artist": "Artist Name", 
     "mood": "specific mood",
     "reason": "Why this matches the photo",
-    "genre": "genre",
-    "best_clip": {
-      "start_time": "1:23",
-      "end_time": "1:38", 
-      "duration": "15 seconds",
-      "section": "chorus",
-      "why_perfect": "Why this clip is perfect"
-    }
+    "genre": "genre"
+   
   }
 ]
 
@@ -162,13 +150,7 @@ CRITICAL: Start your response with [ and end with ]. Do not include any text bef
           "mood": "chill",
           "reason": "Perfect for relaxed, cozy vibes with warm atmosphere",
           "genre": "R&B",
-          "best_clip": {
-            "start_time": "1:05",
-            "end_time": "1:25", 
-            "duration": "20 seconds",
-            "section": "chorus",
-            "why_perfect": "The chorus perfectly captures the relaxed, confident energy of your photo"
-          }
+          
         }
       ],
       energetic: [
@@ -178,13 +160,7 @@ CRITICAL: Start your response with [ and end with ]. Do not include any text bef
           "mood": "energetic",
           "reason": "High energy matches the vibrant, dynamic atmosphere",
           "genre": "pop",
-          "best_clip": {
-            "start_time": "1:12",
-            "end_time": "1:27",
-            "duration": "15 seconds",
-            "section": "chorus", 
-            "why_perfect": "The main chorus has explosive energy that perfectly matches your vibrant photo"
-          }
+          
         }
       ],
       default: [
@@ -194,13 +170,7 @@ CRITICAL: Start your response with [ and end with ]. Do not include any text bef
           "mood": "nostalgic",
           "reason": "Versatile song that works with most Instagram aesthetics",
           "genre": "pop",
-          "best_clip": {
-            "start_time": "1:15",
-            "end_time": "1:30",
-            "duration": "15 seconds",
-            "section": "chorus",
-            "why_perfect": "The emotional chorus section creates perfect nostalgic connection with your photo"
-          }
+         
         },
         {
           "title": "Anti-Hero",
@@ -208,13 +178,7 @@ CRITICAL: Start your response with [ and end with ]. Do not include any text bef
           "mood": "relatable",
           "reason": "Popular choice for authentic, personal Instagram posts", 
           "genre": "pop",
-          "best_clip": {
-            "start_time": "0:55",
-            "end_time": "1:10",
-            "duration": "15 seconds",
-            "section": "pre-chorus",
-            "why_perfect": "This section has the perfect relatable, authentic energy for your personal photo"
-          }
+         
         }
       ]
     };

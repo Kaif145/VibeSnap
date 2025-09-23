@@ -160,147 +160,189 @@ function resetForm() {
   previewImage.style.display = "none";
 }
 
-// Instagram Notes functionality
-// function showMoodForm() {
-//   document.getElementById('moodForm').style.display = 'block';
-//   document.getElementById('notesResults').style.display = 'none';
-//   document.getElementById('notesError').style.display = 'none';
-//   document.getElementById('moodInput').focus();
-// }
+// Instagram Notes and Story functionality
+function showMoodForm() {
+  document.getElementById('moodForm').style.display = 'block';
+  document.getElementById('storyForm').style.display = 'none';
+  document.getElementById('notesResults').style.display = 'none';
+  document.getElementById('notesError').style.display = 'none';
+  document.getElementById('moodInput').focus();
+}
 
-// async function getMoodSongs() {
-//   const mood = document.getElementById('moodInput').value.trim();
-//   const language = document.querySelector('input[name="language"]:checked').value;
+function showStoryForm() {
+  document.getElementById('storyForm').style.display = 'block';
+  document.getElementById('moodForm').style.display = 'none';
+  document.getElementById('notesResults').style.display = 'none';
+  document.getElementById('notesError').style.display = 'none';
+  document.getElementById('storyInput').focus();
+}
 
-//   if (!mood) {
-//     alert('Please tell us how you\'re feeling!');
-//     return;
-//   }
+async function getMoodSongs() {
+  const mood = document.getElementById('moodInput').value.trim();
+  const language = document.querySelector('input[name="mood-language"]:checked').value;
 
-//   showNotesLoading();
+  if (!mood) {
+    alert('Please tell us how you\'re feeling!');
+    return;
+  }
 
-//   try {
-//     const response = await fetch('/api/notes/mood', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ mood, language })
-//     });
+  showNotesLoading();
 
-//     const data = await response.json();
+  try {
+    const response = await fetch('/api/notes/mood', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ mood, language })
+    });
 
-//     if (data.success) {
-//       displayNotesResults(data, `Songs for when you're feeling: "${mood}"`);
-//     } else {
-//       showNotesError(data.error || 'Could not get song suggestions');
-//     }
-//   } catch (err) {
-//     showNotesError('Network error. Please try again.');
-//   }
+    const data = await response.json();
 
-//   hideNotesLoading();
-// }
+    if (data.success) {
+      displayNotesResults(data, `Songs for when you're feeling: "${mood}"`);
+    } else {
+      showNotesError(data.error || 'Could not get song suggestions');
+    }
+  } catch (err) {
+    showNotesError('Network error. Please try again.');
+  }
 
-// async function getTrendingSongs() {
-//   const language = 'mixed';
+  hideNotesLoading();
+}
 
-//   showNotesLoading();
+async function getStorySongs() {
+  const story = document.getElementById('storyInput').value.trim();
+  const language = document.querySelector('input[name="story-language"]:checked').value;
 
-//   try {
-//     const response = await fetch(`/api/notes/trending?language=${language}`);
-//     const data = await response.json();
+  if (!story) {
+    alert('Please tell us about your story!');
+    return;
+  }
 
-//     if (data.success) {
-//       displayNotesResults(data, "🔥 Trending Instagram Notes Songs");
-//     } else {
-//       showNotesError(data.error || 'Could not get trending songs');
-//     }
-//   } catch (err) {
-//     showNotesError('Network error. Please try again.');
-//   }
+  showNotesLoading();
 
-//   hideNotesLoading();
-// }
+  try {
+    const response = await fetch('/api/notes/story', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ story, language })
+    });
 
-// function displayNotesResults(data, title) {
-//   document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram Notes!`;
+    const data = await response.json();
+
+    if (data.success) {
+      displayNotesResults(data, `Songs for your story: "${story}"`);
+    } else {
+      showNotesError(data.error || 'Could not get song suggestions');
+    }
+  } catch (err) {
+    showNotesError('Network error. Please try again.');
+  }
+
+  hideNotesLoading();
+}
+
+async function getTrendingSongs() {
+  const language = 'mixed';
+
+  showNotesLoading();
+
+  try {
+    const response = await fetch(`/api/notes/trending?language=${language}`);
+    const data = await response.json();
+
+    if (data.success) {
+      displayNotesResults(data, "🔥 Trending Songs Right Now");
+    } else {
+      showNotesError(data.error || 'Could not get trending songs');
+    }
+  } catch (err) {
+    showNotesError('Network error. Please try again.');
+  }
+
+  hideNotesLoading();
+}
+
+function displayNotesResults(data, title) {
+  document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram!`;
   
-//   const songsHTML = data.suggestions.map((song) => `
-//     <div class="song">
-//       <div class="song-header">
-//         <div class="song-title">${song.title}</div>
-//         <div class="song-artist">by ${song.artist}</div>
-//       </div>
+  const songsHTML = data.suggestions.map((song) => `
+    <div class="song">
+      <div class="song-header">
+        <div class="song-title">${song.title}</div>
+        <div class="song-artist">by ${song.artist}</div>
+      </div>
       
-//       <div class="song-info">
-//         <span class="song-mood">${song.mood}</span>
-//         <span class="song-genre">${song.genre}</span>
-//         ${song.language ? `<span class="song-language">${song.language}</span>` : ''}
-//       </div>
+      <div class="song-info">
+        <span class="song-mood">${song.mood}</span>
+        <span class="song-genre">${song.genre}</span>
+        ${song.language ? `<span class="song-language">${song.language}</span>` : ''}
+      </div>
       
-//       <div class="song-reason">${song.reason}</div>
+      <div class="song-reason">${song.reason}</div>
       
-//       ${song.best_clip ? `
-//         <div class="clip-suggestion">
-//           <div class="clip-header">
-//             <i class="fas fa-clock"></i>
-//             <span class="clip-time">${song.best_clip.start_time} - ${song.best_clip.end_time}</span>
-//             <span class="clip-duration">(${song.best_clip.duration})</span>
-//           </div>
-//           <div class="clip-section">
-//             <strong>${song.best_clip.section.charAt(0).toUpperCase() + song.best_clip.section.slice(1)}:</strong>
-//             ${song.best_clip.why_perfect}
-//           </div>
-//         </div>
-//       ` : ''}
-      
-//       <div class="song-controls">
-//         <a href="${song.spotify_url}" target="_blank" class="spotify-link">
-//           <i class="fab fa-spotify"></i>
-//           Open in Spotify
-//         </a>
-//       </div>
-//     </div>
-//   `).join('');
+      <div class="song-controls">
+        <a href="${song.spotify_url}" target="_blank" class="spotify-link">
+          <i class="fab fa-spotify"></i>
+          Open in Spotify
+        </a>
+      </div>
+    </div>
+  `).join('');
   
-//   document.getElementById('notesSongs').innerHTML = songsHTML;
-//   document.getElementById('notesResults').style.display = 'block';
-// }
+  document.getElementById('notesSongs').innerHTML = songsHTML;
+  document.getElementById('notesResults').style.display = 'block';
+}
 
-// function showNotesLoading() {
-//   document.getElementById('moodForm').style.display = 'none';
-//   document.getElementById('notesLoading').style.display = 'block';
-//   document.getElementById('notesResults').style.display = 'none';
-//   document.getElementById('notesError').style.display = 'none';
-// }
+function showNotesLoading() {
+  document.getElementById('moodForm').style.display = 'none';
+  document.getElementById('storyForm').style.display = 'none';
+  document.getElementById('notesLoading').style.display = 'block';
+  document.getElementById('notesResults').style.display = 'none';
+  document.getElementById('notesError').style.display = 'none';
+}
 
-// function hideNotesLoading() {
-//   document.getElementById('notesLoading').style.display = 'none';
-// }
+function hideNotesLoading() {
+  document.getElementById('notesLoading').style.display = 'none';
+}
 
-// function showNotesError(message) {
-//   document.getElementById('notesErrorMessage').textContent = message;
-//   document.getElementById('notesError').style.display = 'block';
-// }
+function showNotesError(message) {
+  document.getElementById('notesErrorMessage').textContent = message;
+  document.getElementById('notesError').style.display = 'block';
+}
 
-// function resetNotesForm() {
-//   document.getElementById('moodForm').style.display = 'block';
-//   document.getElementById('notesResults').style.display = 'none';
-//   document.getElementById('notesError').style.display = 'none';
-//   document.getElementById('moodInput').value = '';
-// }
+function resetNotesForm() {
+  document.getElementById('moodForm').style.display = 'none';
+  document.getElementById('storyForm').style.display = 'none';
+  document.getElementById('notesResults').style.display = 'none';
+  document.getElementById('notesError').style.display = 'none';
+  document.getElementById('moodInput').value = '';
+  document.getElementById('storyInput').value = '';
+}
 
-// // Smooth scrolling for better UX
-// function scrollToResults() {
-//   document.getElementById('results').scrollIntoView({ 
-//     behavior: 'smooth' 
-//   });
-// }
-
-// // Add scroll to results after displaying them
-// const originalDisplayResults = displayResults;
-// displayResults = function(data) {
-//   originalDisplayResults(data);
-//   setTimeout(scrollToResults, 100);
-// };
+// Tab Navigation
+function showTab(tabId, element) {
+  // Hide all tab contents
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabContents.forEach(tab => tab.classList.remove('active'));
+  
+  // Remove active class from all tab buttons
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(btn => btn.classList.remove('active'));
+  
+  // Show selected tab content
+  document.getElementById(tabId).classList.add('active');
+  
+  // Add active class to clicked button
+  element.classList.add('active');
+  
+  // Reset forms when switching tabs
+  if (tabId === 'photo-tab') {
+    resetForm();
+  } else if (tabId === 'notes-tab') {
+    resetNotesForm();
+  }
+}

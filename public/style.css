@@ -942,3 +942,150 @@ h1 {
 .song:nth-child(3) { animation-delay: 0.3s; }
 .song:nth-child(4) { animation-delay: 0.4s; }
 .song:nth-child(5) { animation-delay: 0.5s; }
+
+
+
+/* Add this to your existing style.css */
+
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #eee;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  margin: 0 0.5rem;
+}
+
+.tab-btn:hover {
+  color: #667eea;
+  background-color: #f8f9ff;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background-color: #f8f9ff;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Tab Content */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Notes Options Styling */
+.notes-options {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.notes-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-width: 180px;
+}
+
+/* Language Options */
+.language-options {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.language-options label:first-child {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: #666;
+  font-weight: 600;
+}
+
+.language-radio-group {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.language-radio-group label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.language-radio-group label:hover {
+  background-color: #f0f4ff;
+}
+
+.language-radio-group input[type="radio"] {
+  margin: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .tab-navigation {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tab-btn {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    margin: 0;
+    border-bottom: none;
+    border-radius: 8px;
+  }
+  
+  .tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .notes-options {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .notes-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .language-radio-group {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
