@@ -29,31 +29,31 @@ class NotesController {
     }
   }
 
-  static async getStorySongs(req, res, next) {
-    try {
-      const { story, language } = req.body;
+  // static async getStorySongs(req, res, next) {
+  //   try {
+  //     const { story, language } = req.body;
       
-      console.log(`📖 Story request - Story: ${story}, Language: ${language || 'mixed'}`);
+  //     console.log(`📖 Story request - Story: ${story}, Language: ${language || 'mixed'}`);
 
-      const suggestions = await NotesService.getSongsForStory(story, language);
+  //     const suggestions = await NotesService.getSongsForStory(story, language);
       
-      console.log(`✅ Generated ${suggestions.length} story songs`);
+  //     console.log(`✅ Generated ${suggestions.length} story songs`);
 
-      res.json(Helpers.createResponse(true, {
-        suggestions,
-        story,
-        language: language || 'mixed',
-        type: 'story-based'
-      }, null, {
-        totalSongs: suggestions.length,
-        suggestedFor: 'instagram-story'
-      }));
+  //     res.json(Helpers.createResponse(true, {
+  //       suggestions,
+  //       story,
+  //       language: language || 'mixed',
+  //       type: 'story-based'
+  //     }, null, {
+  //       totalSongs: suggestions.length,
+  //       suggestedFor: 'instagram-story'
+  //     }));
 
-    } catch (error) {
-      console.error('Story controller error:', error);
-      next(error);
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Story controller error:', error);
+  //     next(error);
+  //   }
+  // }
 
   static async getTrendingSongs(req, res, next) {
     try {

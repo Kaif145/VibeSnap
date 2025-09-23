@@ -169,13 +169,13 @@ function showMoodForm() {
   document.getElementById('moodInput').focus();
 }
 
-function showStoryForm() {
-  document.getElementById('storyForm').style.display = 'block';
-  document.getElementById('moodForm').style.display = 'none';
-  document.getElementById('notesResults').style.display = 'none';
-  document.getElementById('notesError').style.display = 'none';
-  document.getElementById('storyInput').focus();
-}
+// function showStoryForm() {
+//   document.getElementById('storyForm').style.display = 'block';
+//   document.getElementById('moodForm').style.display = 'none';
+//   document.getElementById('notesResults').style.display = 'none';
+//   document.getElementById('notesError').style.display = 'none';
+//   document.getElementById('storyInput').focus();
+// }
 
 async function getMoodSongs() {
   const mood = document.getElementById('moodInput').value.trim();
@@ -211,39 +211,39 @@ async function getMoodSongs() {
   hideNotesLoading();
 }
 
-async function getStorySongs() {
-  const story = document.getElementById('storyInput').value.trim();
-  const language = document.querySelector('input[name="story-language"]:checked').value;
+// async function getStorySongs() {
+//   const story = document.getElementById('storyInput').value.trim();
+//   const language = document.querySelector('input[name="story-language"]:checked').value;
 
-  if (!story) {
-    alert('Please tell us about your story!');
-    return;
-  }
+//   if (!story) {
+//     alert('Please tell us about your story!');
+//     return;
+//   }
 
-  showNotesLoading();
+//   showNotesLoading();
 
-  try {
-    const response = await fetch('/api/notes/story', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ story, language })
-    });
+//   try {
+//     const response = await fetch('/api/notes/story', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ story, language })
+//     });
 
-    const data = await response.json();
+//     const data = await response.json();
 
-    if (data.success) {
-      displayNotesResults(data, `Songs for your story: "${story}"`);
-    } else {
-      showNotesError(data.error || 'Could not get song suggestions');
-    }
-  } catch (err) {
-    showNotesError('Network error. Please try again.');
-  }
+//     if (data.success) {
+//       displayNotesResults(data, `Songs for your story: "${story}"`);
+//     } else {
+//       showNotesError(data.error || 'Could not get song suggestions');
+//     }
+//   } catch (err) {
+//     showNotesError('Network error. Please try again.');
+//   }
 
-  hideNotesLoading();
-}
+//   hideNotesLoading();
+// }
 
 async function getTrendingSongs() {
   const language = 'mixed';

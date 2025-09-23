@@ -54,30 +54,30 @@ class NotesService {
     }
   }
 
-  static async getSongsForStory(story, language = 'mixed') {
-    try {
-      const prompt = this.buildStoryPrompt(story, language);
+  // static async getSongsForStory(story, language = 'mixed') {
+  //   try {
+  //     const prompt = this.buildStoryPrompt(story, language);
       
-      const completion = await client.chat.completions.create({
-        model: "deepseek/deepseek-chat",
-        messages: [{ role: "user", content: prompt }],
-        max_tokens: 1000,
-        temperature: 0.8
-      });
+  //     const completion = await client.chat.completions.create({
+  //       model: "deepseek/deepseek-chat",
+  //       messages: [{ role: "user", content: prompt }],
+  //       max_tokens: 1000,
+  //       temperature: 0.8
+  //     });
 
-      const response = completion.choices[0].message.content.trim();
-      console.log('📖 Story AI response received');
+  //     const response = completion.choices[0].message.content.trim();
+  //     console.log('📖 Story AI response received');
       
-      let suggestions = this.parseResponse(response);
-      suggestions = await this.addSpotifyLinks(suggestions);
+  //     let suggestions = this.parseResponse(response);
+  //     suggestions = await this.addSpotifyLinks(suggestions);
       
-      return suggestions;
+  //     return suggestions;
 
-    } catch (error) {
-      console.error('Story service error:', error);
-      return this.getFallbackSongs('story', story, language);
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Story service error:', error);
+  //     return this.getFallbackSongs('story', story, language);
+  //   }
+  // }
 
   static buildStoryPrompt(story, language) {
     const languageInstructions = this.getLanguageInstructions(language);
@@ -151,13 +151,7 @@ Return ONLY this JSON format:
     "genre": "genre",
     "language": "English/Hindi",
     "vibe": "chill/energetic/emotional/confident/etc",
-    "best_clip": {
-      "start_time": "1:15",
-      "end_time": "1:30",
-      "duration": "15 seconds", 
-      "section": "chorus/hook/verse",
-      "why_perfect": "Why this exact clip is perfect for Instagram Notes with this mood"
-    }
+    
   }
 ]
 
@@ -244,7 +238,7 @@ Ensure good balance between languages. No extra text, just valid JSON.`;
   static getLanguageInstructions(language) {
     switch(language) {
       case 'hindi':
-        return "🇮🇳 Focus ONLY on Hindi songs: Bollywood hits, indie Hindi artists, regional favorites. Include both classic and contemporary Hindi music.";
+        return "🇮🇳 Focus ONLY on Hindi songs: Bollywood hits, indian Hindi artists, regional favorites. Include both classic and contemporary Hindi music.";
       case 'english':
         return "🌍 Focus ONLY on English songs: International hits, trending tracks, mix of established and emerging artists.";
       case 'mixed':

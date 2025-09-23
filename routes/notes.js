@@ -15,10 +15,10 @@ router.post("/notes/mood",
 );
 
 // Get songs for Instagram Story
-router.post("/notes/story",
-  // validateNotesRequest, 
-  NotesController.getStorySongs
-);
+// router.post("/notes/story",
+//   // validateNotesRequest, 
+//   NotesController.getStorySongs
+// );
 
 // Get trending songs for Instagram Notes
 router.get("/notes/trending",
