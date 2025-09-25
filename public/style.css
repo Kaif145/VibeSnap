@@ -1089,3 +1089,112 @@ h1 {
     gap: 0.8rem;
   }
 }
+
+
+
+/* --- Language Options: visually distinct chips and show-all button --- */
+.language-radio-group {
+  display: flex;
+  gap: 1.1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.language-radio-group label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem;
+  border-radius: 18px;
+  background: #f4f4fa;
+  font-size: 0.99rem;
+  color: #444;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+  margin-bottom: 0.4rem;
+  user-select: none;
+}
+.language-radio-group label:hover,
+.language-radio-group input[type="radio"]:focus + span {
+  border-color: #667eea;
+  background: #f0f4ff;
+}
+
+.language-radio-group input[type="radio"] {
+  accent-color: #764ba2;
+  margin: 0;
+}
+
+/* Optionally, color chips for main languages */
+.language-radio-group label[for*="english"]   { background: #e4f0ff; }
+.language-radio-group label[for*="hindi"]     { background: #fce4ec; }
+.language-radio-group label[for*="punjabi"]   { background: #f3e8fd; }
+.language-radio-group label[for*="bengali"]   { background: #eafce8; }
+.language-radio-group label[for*="k-pop"]     { background: #ffe9f7; }
+.language-radio-group label[for*="tamil"]     { background: #fdf7e3; }
+.language-radio-group label[for*="spanish"]   { background: #fff4e6; }
+.language-radio-group label[for*="mixed"]     { background: #f6f6fa; }
+
+/* --- Show All Languages button --- */
+.show-all-languages-btn {
+  background: #f3f5ff;
+  color: #667eea;
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  font-size: 1rem;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  margin: 0.2rem 0 0 0;
+  transition: background 0.15s, color 0.15s;
+  display: inline-block;
+}
+.show-all-languages-btn:hover {
+  background: #667eea;
+  color: #fff;
+}
+
+/* --- Show More Songs button --- */
+#showMoreNotesBtn {
+  display: none;
+  width: 100%;
+  padding: 0.85rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 1.2rem;
+  margin-bottom: 0.3rem;
+  transition: background 0.18s, box-shadow 0.18s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.06);
+  letter-spacing: 0.01em;
+}
+#showMoreNotesBtn:disabled {
+  background: #b0bec5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+#showMoreNotesBtn:hover,
+#showMoreNotesBtn:focus {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.13);
+  color: #fff;
+  transform: translateY(-2px) scale(1.025);
+}
+
+/* --- Responsive for mobile --- */
+@media (max-width: 600px) {
+  .language-radio-group {
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+  }
+  #showMoreNotesBtn {
+    font-size: 1rem;
+    padding: 0.7rem 0;
+  }
+}

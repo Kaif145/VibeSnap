@@ -85,14 +85,90 @@ const FALLBACK_SONGS = {
   ]
 };
 
+
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_PREFERENCE_LENGTH = 100;
+
+
+const NOTES_FALLBACK_SONGS = {
+  mixed: {
+    mixed: [
+      {
+        title: "Vienna",
+        artist: "Billy Joel",
+        mood: "nostalgic",
+        reason: "Perfect for thoughtful, rainy, or reflective moods",
+        genre: "soft rock",
+        spotify_url: "https://open.spotify.com/track/3hQxkRwPjF9hQqv3U3bGJk"
+      },
+      {
+        title: "Let It Go",
+        artist: "James Bay",
+        mood: "free",
+        reason: "Great for moments of relief after stress, like finishing exams",
+        genre: "indie folk",
+        spotify_url: "https://open.spotify.com/track/4eLSCSELtXh6Wz4G7v7udU"
+      },
+      {
+        title: "Here Comes The Sun",
+        artist: "The Beatles",
+        mood: "uplifting",
+        reason: "Best for positive, fresh-start moments",
+        genre: "classic rock",
+        spotify_url: "https://open.spotify.com/track/6dGnYIeXmHdcikdzNNDMm2"
+      },
+      {
+        title: "Good Days",
+        artist: "SZA",
+        mood: "chill",
+        reason: "For relaxed, cozy, or introspective moods",
+        genre: "R&B",
+        spotify_url: "https://open.spotify.com/track/4iJyoBOLtHqaGxP12qzhQI"
+      }
+    ]
+  },
+  english: {
+    mixed: [
+      // You can copy entries from above or add more English-only suggestions
+      {
+        title: "Put Your Records On",
+        artist: "Corinne Bailey Rae",
+        mood: "carefree",
+        reason: "Feel-good song for sunny, relaxed notes",
+        genre: "soul",
+        spotify_url: "https://open.spotify.com/track/0Hz9j2SP8P6u0fS6wPSo7e"
+      }
+    ]
+  },
+  hindi: {
+    mixed: [
+      {
+        title: "Ilahi",
+        artist: "Arijit Singh",
+        mood: "free",
+        reason: "Perfect for travel, freedom, or post-exam energy",
+        genre: "Bollywood",
+        spotify_url: "https://open.spotify.com/track/3xZMPaeL3T9g6N1EGX8GFC"
+      },
+      {
+        title: "Phir Le Aaya Dil",
+        artist: "Arijit Singh",
+        mood: "nostalgic",
+        reason: "For nostalgic, rainy, or emotional moments",
+        genre: "Bollywood",
+        spotify_url: "https://open.spotify.com/track/1R5rCIzQb84F0QurMv0sC9"
+      }
+    ]
+  }
+};
+
 
 module.exports = {
   SMART_FALLBACKS,
   FALLBACK_SONGS,
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE,
-  MAX_PREFERENCE_LENGTH
+  MAX_PREFERENCE_LENGTH,
+  NOTES_FALLBACK_SONGS
 };

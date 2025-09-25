@@ -1,4 +1,40 @@
-// script.js - Main JavaScript functionality
+// ========= Language Options Expand/Collapse =========
+const allLanguages = [
+  { value: "mixed", label: "🌏 All (Mixed)" },
+  { value: "english", label: "🇺🇸 English" },
+  { value: "hindi", label: "🇮🇳 Hindi" },
+  { value: "punjabi", label: "🛕 Punjabi" },
+  { value: "bengali", label: "🥭 Bengali" },
+  { value: "k-pop", label: "🎤 K-pop" },
+  { value: "tamil", label: "🕉 Tamil" },
+  { value: "telugu", label: "🎬 Telugu" },
+  { value: "marathi", label: "🍋 Marathi" },
+  { value: "gujarati", label: "🌶 Gujarati" },
+  { value: "urdu", label: "🌙 Urdu" },
+  { value: "spanish", label: "🇪🇸 Spanish" },
+  { value: "french", label: "🇫🇷 French" },
+  { value: "arabic", label: "🌴 Arabic" }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  const group = document.getElementById("languageRadioGroup");
+  const btn = document.getElementById("showAllLanguagesBtn");
+  if (btn) {
+    btn.addEventListener("click", function() {
+      group.innerHTML = "";
+      allLanguages.forEach(lang => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="radio" name="mood-language" value="${lang.value}"> ${lang.label}`;
+        group.appendChild(label);
+      });
+      // Set checked to "mixed" if nothing else is checked
+      const checked = document.querySelector('input[name="mood-language"]:checked');
+      if (!checked) group.querySelector('input').checked = true;
+    });
+  }
+});
+
+// ========= Photo Upload Functionality =========
 const form = document.getElementById("uploadForm");
 const loading = document.getElementById("loading");
 const results = document.getElementById("results");
@@ -7,74 +43,74 @@ const fileInput = document.getElementById("fileInput");
 const previewImage = document.getElementById("previewImage");
 const uploadArea = document.querySelector(".upload-area");
 
-// File preview functionality
-fileInput.addEventListener("change", function (e) {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      previewImage.src = e.target.result;
-      previewImage.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// Drag and drop functionality
-uploadArea.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  uploadArea.classList.add("dragover");
-});
-
-uploadArea.addEventListener("dragleave", () => {
-  uploadArea.classList.remove("dragover");
-});
-
-uploadArea.addEventListener("drop", (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove("dragover");
-  const files = e.dataTransfer.files;
-  if (files.length > 0) {
-    fileInput.files = files;
-    fileInput.dispatchEvent(new Event("change"));
-  }
-});
-
-// Form submission
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(form);
-
-  // Show loading state
-  form.style.display = "none";
-  loading.style.display = "block";
-  results.style.display = "none";
-  error.style.display = "none";
-
-  try {
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      displayResults(data);
-    } else {
-      showError(data.error || "Something went wrong");
+if (fileInput) {
+  fileInput.addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = "block";
+      };
+      reader.readAsDataURL(file);
     }
-  } catch (err) {
-    showError("Network error. Please check your connection.");
-  }
+  });
+}
 
-  loading.style.display = "none";
-});
+if (uploadArea) {
+  uploadArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadArea.classList.add("dragover");
+  });
 
-// Display results with uploaded photo and collapsible analysis
+  uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("dragover");
+  });
+
+  uploadArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove("dragover");
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      fileInput.files = files;
+      fileInput.dispatchEvent(new Event("change"));
+    }
+  });
+}
+
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    form.style.display = "none";
+    loading.style.display = "block";
+    results.style.display = "none";
+    error.style.display = "none";
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        displayResults(data);
+      } else {
+        showError(data.error || "Something went wrong");
+      }
+    } catch (err) {
+      showError("Network error. Please check your connection.");
+    }
+
+    loading.style.display = "none";
+  });
+}
+
 function displayResults(data) {
-  // Create photo display section
   const photoSection = data.uploadedPhoto ? `
     <div class="uploaded-photo-section">
       <h3>Your Photo:</h3>
@@ -82,7 +118,6 @@ function displayResults(data) {
     </div>
   ` : '';
 
-  // Create collapsible analysis section
   const analysisSection = `
     <div class="analysis-toggle-section">
       <button class="analysis-toggle-btn" onclick="toggleAnalysis()">
@@ -104,16 +139,11 @@ function displayResults(data) {
           <div class="song-title">${song.title}</div>
           <div class="song-artist">by ${song.artist}</div>
         </div>
-        
         <div class="song-info">
           <span class="song-mood">${song.mood}</span>
           <span class="song-genre">${song.genre}</span>
         </div>
-        
         <div class="song-reason">${song.reason}</div>
-        
-       
-        
         <div class="song-controls">
           <a href="${song.spotify_url}" target="_blank" class="spotify-link" aria-label="Open ${song.title} in Spotify">
             <i class="fab fa-spotify"></i>
@@ -128,7 +158,6 @@ function displayResults(data) {
   results.style.display = "block";
 }
 
-// Toggle analysis visibility
 function toggleAnalysis() {
   const content = document.getElementById('analysisContent');
   const icon = document.getElementById('analysisIcon');
@@ -145,13 +174,11 @@ function toggleAnalysis() {
   }
 }
 
-// Error handling
 function showError(message) {
   document.getElementById("errorMessage").textContent = message;
   error.style.display = "block";
 }
 
-// Reset form
 function resetForm() {
   form.style.display = "block";
   results.style.display = "none";
@@ -160,22 +187,20 @@ function resetForm() {
   previewImage.style.display = "none";
 }
 
-// Instagram Notes and Story functionality
+// ========= Notes/Show More Logic =========
+let notesLastMood = '';
+let notesLastLanguage = '';
+let notesShownTitles = [];
+let notesResultsTitle = '';
+let notesIsLoading = false;
+
 function showMoodForm() {
   document.getElementById('moodForm').style.display = 'block';
-  document.getElementById('storyForm').style.display = 'none';
   document.getElementById('notesResults').style.display = 'none';
   document.getElementById('notesError').style.display = 'none';
+  document.getElementById('showMoreNotesBtn').style.display = 'none';
   document.getElementById('moodInput').focus();
 }
-
-// function showStoryForm() {
-//   document.getElementById('storyForm').style.display = 'block';
-//   document.getElementById('moodForm').style.display = 'none';
-//   document.getElementById('notesResults').style.display = 'none';
-//   document.getElementById('notesError').style.display = 'none';
-//   document.getElementById('storyInput').focus();
-// }
 
 async function getMoodSongs() {
   const mood = document.getElementById('moodInput').value.trim();
@@ -186,6 +211,11 @@ async function getMoodSongs() {
     return;
   }
 
+  notesLastMood = mood;
+  notesLastLanguage = language;
+  notesShownTitles = [];
+  notesResultsTitle = `Songs for when you're feeling: "${mood}"`;
+
   showNotesLoading();
 
   try {
@@ -194,56 +224,64 @@ async function getMoodSongs() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ mood, language })
+      body: JSON.stringify({ mood, language, prevTitles: [] })
     });
 
     const data = await response.json();
 
     if (data.success) {
-      displayNotesResults(data, `Songs for when you're feeling: "${mood}"`);
+      notesShownTitles = data.suggestions.map(song => song.title);
+      displayNotesResults(data, notesResultsTitle, false);
+      document.getElementById('showMoreNotesBtn').style.display = data.suggestions.length >= 10 ? 'block' : 'none';
     } else {
       showNotesError(data.error || 'Could not get song suggestions');
+      document.getElementById('showMoreNotesBtn').style.display = 'none';
     }
   } catch (err) {
     showNotesError('Network error. Please try again.');
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
   }
 
   hideNotesLoading();
 }
 
-// async function getStorySongs() {
-//   const story = document.getElementById('storyInput').value.trim();
-//   const language = document.querySelector('input[name="story-language"]:checked').value;
+async function getMoreMoodSongs() {
+  if (!notesLastMood || !notesLastLanguage) return;
 
-//   if (!story) {
-//     alert('Please tell us about your story!');
-//     return;
-//   }
+  showNotesLoading();
 
-//   showNotesLoading();
+  try {
+    const response = await fetch('/api/notes/mood', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        mood: notesLastMood,
+        language: notesLastLanguage,
+        prevTitles: notesShownTitles
+      })
+    });
 
-//   try {
-//     const response = await fetch('/api/notes/story', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ story, language })
-//     });
+    const data = await response.json();
 
-//     const data = await response.json();
+    if (data.success) {
+      notesShownTitles = notesShownTitles.concat(data.suggestions.map(song => song.title));
+      displayNotesResults(data, notesResultsTitle, true);
+      if (data.suggestions.length < 5) {
+        document.getElementById('showMoreNotesBtn').style.display = 'none';
+      }
+    } else {
+      showNotesError(data.error || 'Could not get more songs');
+      document.getElementById('showMoreNotesBtn').style.display = 'none';
+    }
+  } catch (err) {
+    showNotesError('Network error. Please try again.');
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
+  }
 
-//     if (data.success) {
-//       displayNotesResults(data, `Songs for your story: "${story}"`);
-//     } else {
-//       showNotesError(data.error || 'Could not get song suggestions');
-//     }
-//   } catch (err) {
-//     showNotesError('Network error. Please try again.');
-//   }
-
-//   hideNotesLoading();
-// }
+  hideNotesLoading();
+}
 
 async function getTrendingSongs() {
   const language = 'mixed';
@@ -255,35 +293,39 @@ async function getTrendingSongs() {
     const data = await response.json();
 
     if (data.success) {
-      displayNotesResults(data, "🔥 Trending Songs Right Now");
+      displayNotesResults(data, "🔥 Trending Songs Right Now", false);
+      document.getElementById('showMoreNotesBtn').style.display = 'none';
     } else {
       showNotesError(data.error || 'Could not get trending songs');
+      document.getElementById('showMoreNotesBtn').style.display = 'none';
     }
   } catch (err) {
     showNotesError('Network error. Please try again.');
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
   }
 
   hideNotesLoading();
 }
 
-function displayNotesResults(data, title) {
-  document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram!`;
-  
+function displayNotesResults(data, title, append = false) {
+  if (!append) {
+    document.getElementById('notesDescription').innerHTML = `<strong>${title}</strong><br>Perfect for Instagram!`;
+    document.getElementById('notesSongs').innerHTML = '';
+  }
   const songsHTML = data.suggestions.map((song) => `
     <div class="song">
       <div class="song-header">
         <div class="song-title">${song.title}</div>
         <div class="song-artist">by ${song.artist}</div>
       </div>
-      
       <div class="song-info">
         <span class="song-mood">${song.mood}</span>
         <span class="song-genre">${song.genre}</span>
         ${song.language ? `<span class="song-language">${song.language}</span>` : ''}
+        ${song.market ? `<span class="song-market">${song.market}</span>` : ''}
       </div>
-      
+      <div class="song-lyrics">${song.lyrics_snippet ? `"${song.lyrics_snippet}"` : ''}</div>
       <div class="song-reason">${song.reason}</div>
-      
       <div class="song-controls">
         <a href="${song.spotify_url}" target="_blank" class="spotify-link">
           <i class="fab fa-spotify"></i>
@@ -292,20 +334,20 @@ function displayNotesResults(data, title) {
       </div>
     </div>
   `).join('');
-  
-  document.getElementById('notesSongs').innerHTML = songsHTML;
+  document.getElementById('notesSongs').insertAdjacentHTML(append ? 'beforeend' : 'afterbegin', songsHTML);
   document.getElementById('notesResults').style.display = 'block';
 }
 
 function showNotesLoading() {
+  notesIsLoading = true;
   document.getElementById('moodForm').style.display = 'none';
-  document.getElementById('storyForm').style.display = 'none';
   document.getElementById('notesLoading').style.display = 'block';
   document.getElementById('notesResults').style.display = 'none';
   document.getElementById('notesError').style.display = 'none';
 }
 
 function hideNotesLoading() {
+  notesIsLoading = false;
   document.getElementById('notesLoading').style.display = 'none';
 }
 
@@ -315,34 +357,36 @@ function showNotesError(message) {
 }
 
 function resetNotesForm() {
+  notesLastMood = '';
+  notesLastLanguage = '';
+  notesShownTitles = [];
+  notesResultsTitle = '';
   document.getElementById('moodForm').style.display = 'none';
-  document.getElementById('storyForm').style.display = 'none';
   document.getElementById('notesResults').style.display = 'none';
   document.getElementById('notesError').style.display = 'none';
+  document.getElementById('showMoreNotesBtn').style.display = 'none';
   document.getElementById('moodInput').value = '';
-  document.getElementById('storyInput').value = '';
 }
 
 // Tab Navigation
 function showTab(tabId, element) {
-  // Hide all tab contents
   const tabContents = document.querySelectorAll('.tab-content');
   tabContents.forEach(tab => tab.classList.remove('active'));
-  
-  // Remove active class from all tab buttons
   const tabBtns = document.querySelectorAll('.tab-btn');
   tabBtns.forEach(btn => btn.classList.remove('active'));
-  
-  // Show selected tab content
   document.getElementById(tabId).classList.add('active');
-  
-  // Add active class to clicked button
   element.classList.add('active');
-  
-  // Reset forms when switching tabs
   if (tabId === 'photo-tab') {
     resetForm();
   } else if (tabId === 'notes-tab') {
     resetNotesForm();
   }
 }
+
+// Event listeners for Notes section "Show More" button
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('showMoreNotesBtn')) {
+    document.getElementById('showMoreNotesBtn').addEventListener('click', getMoreMoodSongs);
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
+  }
+});

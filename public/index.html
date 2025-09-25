@@ -21,177 +21,173 @@
       </div>
     </header>
 
-   <div class="container">
-  <!-- Tab Navigation -->
-  <div class="tab-navigation">
-    <button class="tab-btn active" onclick="showTab('photo-tab', this)">
-      📸 Photo Analysis
-    </button>
-    <button class="tab-btn" onclick="showTab('notes-tab', this)">
-      🎵 Notes & Stories
-    </button>
-  </div>
-
-  <!-- Photo Tab Content -->
-  <div id="photo-tab" class="tab-content active">
-    <h1>Song Matcher</h1>
-    <p class="subtitle">
-      Upload your photo and get perfect song suggestions for Instagram Story/Post!
-    </p>
-
-    <form id="uploadForm" enctype="multipart/form-data">
-      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-        <div class="upload-icon">📸</div>
-        <div class="upload-text">Click to upload your photo</div>
-        <div style="color: #999; font-size: 0.9rem">
-          JPG, PNG or JPEG (Max 5MB)
-        </div>
-        <input type="file" id="fileInput" name="photo" accept="image/*" required />
-        <img id="previewImage" class="preview-image" style="display: none" />
+    <div class="container">
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-btn active" onclick="showTab('photo-tab', this)">
+          📸 Photo Analysis
+        </button>
+        <button class="tab-btn" onclick="showTab('notes-tab', this)">
+          🎵 Notes & Stories
+        </button>
       </div>
 
-      <input
-        type="text"
-        name="preference"
-        placeholder="Music preference (optional) - e.g. pop, chill, energetic..."
-        class="preference-input"
-      />
+      <!-- Photo Tab Content -->
+      <div id="photo-tab" class="tab-content active">
+        <h1>Song Matcher</h1>
+        <p class="subtitle">
+          Upload your photo and get perfect song suggestions for Instagram
+          Story/Post!
+        </p>
 
-      <button type="submit" class="btn" id="submitBtn">
-        🎶 Get Song Suggestions
-      </button>
-    </form>
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div
+            class="upload-area"
+            onclick="document.getElementById('fileInput').click()"
+          >
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">Click to upload your photo</div>
+            <div style="color: #999; font-size: 0.9rem">
+              JPG, PNG or JPEG (Max 5MB)
+            </div>
+            <input
+              type="file"
+              id="fileInput"
+              name="photo"
+              accept="image/*"
+              required
+            />
+            <img
+              id="previewImage"
+              class="preview-image"
+              style="display: none"
+            />
+          </div>
 
-    <div class="loading" id="loading">
-      <div class="spinner"></div>
-      <div>Analyzing your photo and finding perfect songs...</div>
-    </div>
+          <input
+            type="text"
+            name="preference"
+            placeholder="Music preference (optional) - e.g. pop, chill, energetic..."
+            class="preference-input"
+          />
 
-    <div class="results" id="results">
-      <div class="description" id="description"></div>
-      <div id="songs"></div>
-      <button class="btn" onclick="resetForm()" style="width: 100%; margin-top: 1rem">
-        📸 Try Another Photo
-      </button>
-    </div>
+          <button type="submit" class="btn" id="submitBtn">
+            🎶 Get Song Suggestions
+          </button>
+        </form>
 
-    <div class="error" id="error" style="display: none">
-      <div id="errorMessage"></div>
-      <button class="btn try-again" onclick="resetForm()">Try Again</button>
-    </div>
-  </div>
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <div>Analyzing your photo and finding perfect songs...</div>
+        </div>
 
-  <!-- Notes Tab Content -->
-  <div id="notes-tab" class="tab-content">
-    <h1>Music for Notes</h1>
-    <p class="subtitle">
-      Get perfect songs based on your mood or story!
-    </p>
+        <div class="results" id="results">
+          <div class="description" id="description"></div>
+          <div id="songs"></div>
+          <button
+            class="btn"
+            onclick="resetForm()"
+            style="width: 100%; margin-top: 1rem"
+          >
+            📸 Try Another Photo
+          </button>
+        </div>
 
-    <!-- Notes Options -->
-    <div class="notes-options">
-      <button class="btn notes-btn" onclick="showMoodForm()" id="moodBtn">
-        😊 Songs for My Mood
-      </button>
-      <!-- <button class="btn notes-btn" onclick="showStoryForm()" id="storyBtn">
-        📖 Songs for My Story
-      </button> -->
-      <button class="btn notes-btn" onclick="getTrendingSongs()" id="trendingBtn">
-        📈 Trending Now
-      </button>
-    </div>
-
-    <!-- Mood Form -->
-    <div id="moodForm" style="display: none;">
-      <input 
-        type="text" 
-        id="moodInput"
-        placeholder="How are you feeling? (e.g., excited, missing someone, confident...)"
-        class="preference-input"
-        style="margin-bottom: 1rem;"
-      >
-      
-      <div class="language-options">
-        <label>Language Preference:</label>
-        <div class="language-radio-group">
-          <label>
-            <input type="radio" name="mood-language" value="mixed" checked>
-            🌍 Mixed (English + Hindi)
-          </label>
-          <label>
-            <input type="radio" name="mood-language" value="english">
-            🇺🇸 English Only
-          </label>
-          <label>
-            <input type="radio" name="mood-language" value="hindi">
-            🇮🇳 Hindi Only
-          </label>
+        <div class="error" id="error" style="display: none">
+          <div id="errorMessage"></div>
+          <button class="btn try-again" onclick="resetForm()">Try Again</button>
         </div>
       </div>
 
-      <button class="btn" onclick="getMoodSongs()" id="getMoodSongsBtn">
-        🎶 Get Songs for My Mood
-      </button>
-    </div>
+      <!-- Notes Tab Content -->
+      <div id="notes-tab" class="tab-content">
+        <h1>Music for Notes</h1>
+        <p class="subtitle">Get perfect songs based on your mood or story!</p>
 
-    <!-- Story Form -->
-    <div id="storyForm" style="display: none;">
-      <input 
-        type="text" 
-        id="storyInput"
-        placeholder="What's your story? (e.g., road trip, workout, studying, date night...)"
-        class="preference-input"
-        style="margin-bottom: 1rem;"
-      >
-      
-      <div class="language-options">
-        <label>Language Preference:</label>
-        <div class="language-radio-group">
-          <label>
-            <input type="radio" name="story-language" value="mixed" checked>
-            🌍 Mixed (English + Hindi)
-          </label>
-          <label>
-            <input type="radio" name="story-language" value="english">
-            🇺🇸 English Only
-          </label>
-          <label>
-            <input type="radio" name="story-language" value="hindi">
-            🇮🇳 Hindi Only
-          </label>
+        <!-- Notes Options -->
+        <div class="notes-options">
+          <button class="btn notes-btn" onclick="showMoodForm()" id="moodBtn">
+            🎶 Find My Vibe
+          </button>
+          <button
+            class="btn notes-btn"
+            onclick="getTrendingSongs()"
+            id="trendingBtn"
+          >
+            📈 Trending Now
+          </button>
+        </div>
+
+        <!-- Mood Form -->
+        <div id="moodForm" style="display: none">
+          <input
+            type="text"
+            id="moodInput"
+            placeholder="Tell us your vibe or a moment (e.g., It’s raining and I feel nostalgic)"
+            class="preference-input"
+            style="margin-bottom: 1rem"
+          />
+          <div class="language-options">
+            <label>Language Preference:</label>
+            <div class="language-radio-group" id="languageRadioGroup">
+              <label>
+                <input
+                  type="radio"
+                  name="mood-language"
+                  value="mixed"
+                  checked
+                />
+                🌏 All (Mixed)
+              </label>
+              <button
+                type="button"
+                class="show-all-languages-btn"
+                id="showAllLanguagesBtn"
+              >
+                Show all languages
+              </button>
+            </div>
+          </div>
+
+          <button class="btn" onclick="getMoodSongs()" id="getMoodSongsBtn">
+            🎶 Get Songs for My Mood
+          </button>
+        </div>
+
+        <!-- Notes Loading -->
+        <div class="loading" id="notesLoading" style="display: none">
+          <div class="spinner"></div>
+          <div>Finding perfect songs for you...</div>
+        </div>
+
+        <!-- Notes Results -->
+        <div class="results" id="notesResults" style="display: none">
+          <div class="description" id="notesDescription"></div>
+          <div id="notesSongs"></div>
+          <button
+            class="btn"
+            id="showMoreNotesBtn"
+            style="width: 100%; margin-top: 1rem; display: none"
+          >
+            ➕ Show More Songs
+          </button>
+          <button
+            class="btn"
+            onclick="resetNotesForm()"
+            style="width: 100%; margin-top: 1rem"
+          >
+            🎵 Try Something Else
+          </button>
+        </div>
+
+        <div class="error" id="notesError" style="display: none">
+          <div id="notesErrorMessage"></div>
+          <button class="btn try-again" onclick="resetNotesForm()">
+            Try Again
+          </button>
         </div>
       </div>
-
-      <button class="btn" onclick="getStorySongs()" id="getStorySongsBtn">
-        📖 Get Songs for My Story
-      </button>
     </div>
-
-    <!-- Notes Loading -->
-    <div class="loading" id="notesLoading" style="display: none;">
-      <div class="spinner"></div>
-      <div>Finding perfect songs for you...</div>
-    </div>
-
-    <!-- Notes Results -->
-    <div class="results" id="notesResults" style="display: none;">
-      <div class="description" id="notesDescription"></div>
-      <div id="notesSongs"></div>
-      <button class="btn" onclick="resetNotesForm()" style="width: 100%; margin-top: 1rem;">
-        🎵 Try Something Else
-      </button>
-    </div>
-
-    <!-- Notes Error -->
-    <div class="error" id="notesError" style="display: none;">
-      <div id="notesErrorMessage"></div>
-      <button class="btn try-again" onclick="resetNotesForm()">Try Again</button>
-    </div>
-  </div>
-</div>
-
-
-    
 
     <!-- Footer -->
     <footer class="footer">
