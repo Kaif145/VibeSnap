@@ -17,6 +17,7 @@ const allLanguages = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Language expansion for mood form
   const group = document.getElementById("languageRadioGroup");
   const btn = document.getElementById("showAllLanguagesBtn");
   if (btn) {
@@ -30,6 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
       // Set checked to "mixed" if nothing else is checked
       const checked = document.querySelector('input[name="mood-language"]:checked');
       if (!checked) group.querySelector('input').checked = true;
+    });
+  }
+
+  // Language expansion for trending form
+  const trendingGroup = document.getElementById("trendingLanguageRadioGroup");
+  const trendingBtn = document.getElementById("showAllTrendingLanguagesBtn");
+  if (trendingBtn) {
+    trendingBtn.addEventListener("click", function() {
+      trendingGroup.innerHTML = "";
+      allLanguages.forEach(lang => {
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="radio" name="trending-language" value="${lang.value}"> ${lang.label}`;
+        trendingGroup.appendChild(label);
+      });
+      // Set checked to "mixed" if nothing else is checked
+      const checked = document.querySelector('input[name="trending-language"]:checked');
+      if (!checked) trendingGroup.querySelector('input').checked = true;
     });
   }
 });
@@ -194,12 +212,98 @@ let notesShownTitles = [];
 let notesResultsTitle = '';
 let notesIsLoading = false;
 
+// ========= Trending/Show More Logic =========
+let trendingLastLanguage = '';
+let trendingShownTitles = [];
+let trendingIsLoading = false;
+
+// ========= Social Blade API Integration =========
+const SOCIAL_BLADE_CONFIG = {
+  baseUrl: 'https://api.socialblade.com/v3',
+  clientId: 'cli_c58f9d5b4feaebcf4fcb3805', // Replace with your actual client ID
+  token: '4932bd3e27e954451821042b41af4bd1cc72b07d3ead81396d5c97eb70018f28' // Replace with your actual token
+};
+
+// Get trending TikTok sounds/music
+async function getTikTokTrendingData() {
+  try {
+    const response = await fetch(`${SOCIAL_BLADE_CONFIG.baseUrl}/tiktok/trending/sounds`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${SOCIAL_BLADE_CONFIG.token}`,
+        'X-Client-ID': SOCIAL_BLADE_CONFIG.clientId,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`TikTok API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching TikTok trending data:', error);
+    return null;
+  }
+}
+
+// Get trending Instagram music/hashtags
+async function getInstagramTrendingData() {
+  try {
+    const response = await fetch(`${SOCIAL_BLADE_CONFIG.baseUrl}/instagram/trending/music`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${SOCIAL_BLADE_CONFIG.token}`,
+        'X-Client-ID': SOCIAL_BLADE_CONFIG.clientId,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Instagram API error: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching Instagram trending data:', error);
+    return null;
+  }
+}
+
+// Get comprehensive viral data
+async function getViralTrendingData() {
+  try {
+    const [tiktokData, instagramData] = await Promise.all([
+      getTikTokTrendingData(),
+      getInstagramTrendingData()
+    ]);
+    
+    return {
+      tiktok: tiktokData,
+      instagram: instagramData,
+      timestamp: Date.now()
+    };
+  } catch (error) {
+    console.error('Error fetching viral trending data:', error);
+    return null;
+  }
+}
+
 function showMoodForm() {
   document.getElementById('moodForm').style.display = 'block';
+  document.getElementById('trendingLanguageForm').style.display = 'none';
   document.getElementById('notesResults').style.display = 'none';
   document.getElementById('notesError').style.display = 'none';
   document.getElementById('showMoreNotesBtn').style.display = 'none';
   document.getElementById('moodInput').focus();
+}
+
+function showTrendingLanguageForm() {
+  document.getElementById('trendingLanguageForm').style.display = 'block';
+  document.getElementById('moodForm').style.display = 'none';
+  document.getElementById('notesResults').style.display = 'none';
+  document.getElementById('notesError').style.display = 'none';
+  document.getElementById('showMoreNotesBtn').style.display = 'none';
 }
 
 async function getMoodSongs() {
@@ -219,25 +323,44 @@ async function getMoodSongs() {
   showNotesLoading();
 
   try {
+    // Get viral trending data for better mood matching
+    const viralData = await getViralTrendingData();
+    
+    const requestBody = { 
+      mood, 
+      language, 
+      prevTitles: [],
+      includeViral: true,
+      viralData: viralData,
+      enhancedMatching: true
+    };
+
     const response = await fetch('/api/notes/mood', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ mood, language, prevTitles: [] })
+      body: JSON.stringify(requestBody)
     });
 
     const data = await response.json();
 
     if (data.success) {
       notesShownTitles = data.suggestions.map(song => song.title);
-      displayNotesResults(data, notesResultsTitle, false);
+      
+      // Enhanced title with viral context if available
+      const enhancedTitle = viralData ? 
+        `${notesResultsTitle} (Enhanced with viral trends)` : 
+        notesResultsTitle;
+        
+      displayNotesResults(data, enhancedTitle, false);
       document.getElementById('showMoreNotesBtn').style.display = data.suggestions.length >= 10 ? 'block' : 'none';
     } else {
       showNotesError(data.error || 'Could not get song suggestions');
       document.getElementById('showMoreNotesBtn').style.display = 'none';
     }
   } catch (err) {
+    console.error('Error getting mood songs:', err);
     showNotesError('Network error. Please try again.');
     document.getElementById('showMoreNotesBtn').style.display = 'none';
   }
@@ -284,19 +407,141 @@ async function getMoreMoodSongs() {
 }
 
 async function getTrendingSongs() {
-  const language = 'mixed';
+  const languageElement = document.querySelector('input[name="trending-language"]:checked');
+  const language = languageElement ? languageElement.value : 'mixed';
+
+  trendingLastLanguage = language;
+  trendingShownTitles = [];
 
   showNotesLoading();
 
   try {
-    const response = await fetch(`/api/notes/trending?language=${language}`);
+    // Get viral trending data from Social Blade
+    const viralData = await getViralTrendingData();
+    
+    // Enhanced API call with viral context
+    const apiUrl = `/api/notes/trending?language=${language}&includeViral=true&viralData=${encodeURIComponent(JSON.stringify(viralData))}`;
+    const response = await fetch(apiUrl);
     const data = await response.json();
 
     if (data.success) {
-      displayNotesResults(data, "🔥 Trending Songs Right Now", false);
-      document.getElementById('showMoreNotesBtn').style.display = 'none';
+      trendingShownTitles = data.suggestions.map(song => song.title);
+      
+      // Enhanced title with viral context
+      const title = viralData ? "🔥 Viral Songs Right Now (TikTok + Instagram)" : "🔥 Trending Songs Right Now";
+      displayNotesResults(data, title, false);
+      document.getElementById('showMoreNotesBtn').style.display = data.suggestions.length >= 10 ? 'block' : 'none';
     } else {
       showNotesError(data.error || 'Could not get trending songs');
+      document.getElementById('showMoreNotesBtn').style.display = 'none';
+    }
+  } catch (err) {
+    console.error('Error getting trending songs:', err);
+    showNotesError('Network error. Please try again.');
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
+  }
+
+  hideNotesLoading();
+}
+
+// ========= Viral Songs Function =========
+async function getViralSongs() {
+  showNotesLoading();
+
+  try {
+    // Get comprehensive viral data
+    const viralData = await getViralTrendingData();
+    
+    if (!viralData) {
+      showNotesError('Could not fetch viral trending data');
+      hideNotesLoading();
+      return;
+    }
+
+    // Process viral data into song suggestions
+    const viralSongs = processViralData(viralData);
+    
+    if (viralSongs.length === 0) {
+      showNotesError('No viral songs found at the moment');
+      hideNotesLoading();
+      return;
+    }
+
+    // Display viral songs
+    const mockData = {
+      success: true,
+      suggestions: viralSongs
+    };
+
+    displayNotesResults(mockData, "🚀 Viral Songs (TikTok + Instagram)", false);
+    document.getElementById('showMoreNotesBtn').style.display = 'none';
+    
+  } catch (err) {
+    console.error('Error getting viral songs:', err);
+    showNotesError('Network error. Please try again.');
+  }
+
+  hideNotesLoading();
+}
+
+// Process viral data into song format
+function processViralData(viralData) {
+  const songs = [];
+  
+  // Process TikTok viral sounds
+  if (viralData.tiktok && viralData.tiktok.sounds) {
+    viralData.tiktok.sounds.forEach((sound, index) => {
+      songs.push({
+        title: sound.title || `TikTok Viral Sound ${index + 1}`,
+        artist: sound.artist || 'TikTok Creator',
+        mood: 'Viral',
+        genre: 'Trending',
+        reason: `🔥 Going viral on TikTok with ${sound.usage_count || 0} uses`,
+        spotify_url: sound.spotify_url || '#',
+        language: 'Mixed',
+        market: 'Global',
+        lyrics_snippet: sound.lyrics_snippet || 'Currently trending on TikTok!'
+      });
+    });
+  }
+  
+  // Process Instagram viral music
+  if (viralData.instagram && viralData.instagram.music) {
+    viralData.instagram.music.forEach((music, index) => {
+      songs.push({
+        title: music.title || `Instagram Viral ${index + 1}`,
+        artist: music.artist || 'Instagram Creator',
+        mood: 'Viral',
+        genre: 'Trending',
+        reason: `📸 Trending on Instagram Stories with ${music.usage_count || 0} posts`,
+        spotify_url: music.spotify_url || '#',
+        language: 'Mixed',
+        market: 'Global',
+        lyrics_snippet: music.lyrics_snippet || 'Perfect for Instagram Stories!'
+      });
+    });
+  }
+  
+  return songs.slice(0, 10); // Limit to 10 songs
+}
+
+async function getMoreTrendingSongs() {
+  if (!trendingLastLanguage) return;
+
+  showNotesLoading();
+
+  try {
+    const response = await fetch(`/api/notes/trending?language=${trendingLastLanguage}&prevTitles=${encodeURIComponent(JSON.stringify(trendingShownTitles))}`);
+    const data = await response.json();
+
+    if (data.success) {
+      trendingShownTitles = trendingShownTitles.concat(data.suggestions.map(song => song.title));
+      displayNotesResults(data, "🔥 Trending Songs Right Now", true);
+      if (data.suggestions.length < 5) {
+        document.getElementById('showMoreNotesBtn').style.display = 'none';
+      }
+    } else {
+      showNotesError(data.error || 'Could not get more trending songs');
       document.getElementById('showMoreNotesBtn').style.display = 'none';
     }
   } catch (err) {
@@ -361,7 +606,10 @@ function resetNotesForm() {
   notesLastLanguage = '';
   notesShownTitles = [];
   notesResultsTitle = '';
+  trendingLastLanguage = '';
+  trendingShownTitles = [];
   document.getElementById('moodForm').style.display = 'none';
+  document.getElementById('trendingLanguageForm').style.display = 'none';
   document.getElementById('notesResults').style.display = 'none';
   document.getElementById('notesError').style.display = 'none';
   document.getElementById('showMoreNotesBtn').style.display = 'none';
@@ -386,7 +634,14 @@ function showTab(tabId, element) {
 // Event listeners for Notes section "Show More" button
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('showMoreNotesBtn')) {
-    document.getElementById('showMoreNotesBtn').addEventListener('click', getMoreMoodSongs);
+    document.getElementById('showMoreNotesBtn').addEventListener('click', function() {
+      // Check if we're in mood mode or trending mode
+      if (notesLastMood) {
+        getMoreMoodSongs();
+      } else if (trendingLastLanguage) {
+        getMoreTrendingSongs();
+      }
+    });
     document.getElementById('showMoreNotesBtn').style.display = 'none';
   }
 });

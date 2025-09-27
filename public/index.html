@@ -111,10 +111,39 @@
           </button>
           <button
             class="btn notes-btn"
-            onclick="getTrendingSongs()"
+            onclick="showTrendingLanguageForm()"
             id="trendingBtn"
           >
             📈 Trending Now
+          </button>
+        </div>
+
+        <!-- Trending Language Form -->
+        <div id="trendingLanguageForm" style="display: none">
+          <div class="language-options">
+            <label>Language Preference:</label>
+            <div class="language-radio-group" id="trendingLanguageRadioGroup">
+              <label>
+                <input
+                  type="radio"
+                  name="trending-language"
+                  value="mixed"
+                  checked
+                />
+                🌏 All (Mixed)
+              </label>
+              <button
+                type="button"
+                class="show-all-languages-btn"
+                id="showAllTrendingLanguagesBtn"
+              >
+                Show all languages
+              </button>
+            </div>
+          </div>
+
+          <button class="btn" onclick="getTrendingSongs()" id="getTrendingSongsBtn">
+            📈 Get Trending Songs
           </button>
         </div>
 
