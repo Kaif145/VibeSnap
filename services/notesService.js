@@ -190,11 +190,15 @@ No extra text, just valid JSON.`;
         return "🎵 Focus ONLY on K-pop: Suggest trending K-pop hits, viral TikTok/Instagram tracks, and group/solo favorites.";
       case 'mixed':
       default:
-        return `🌏 Give a mix of ALL types of songs, any language, any genre.
-- Include trending English, Hindi, Punjabi, Bengali, K-pop, and other regional/international hits.
-- Prioritize songs that are popular on Instagram/TikTok Notes, regardless of language.
-- Suggest rap, pop, indie, Bollywood, K-pop, regional, and evergreen favorites.
-- Ensure diversity: at least 5 languages/markets if possible.`;
+        return `🌏 MIXED LANGUAGE SELECTION - Smart Language Distribution:
+- PRIMARY (70-80%): Focus on trending English songs - international hits, viral TikTok tracks, popular Instagram songs
+- SECONDARY (20-30%): Include 1-2 songs from other languages: Hindi, Punjabi, Bengali, K-pop, Spanish, etc.
+- DISTRIBUTION: Out of 10 songs, suggest 7-8 English songs + 1-2 songs from other languages
+- PRIORITY: English songs should be the most trending and popular ones
+- DIVERSITY: The 1-2 non-English songs should be from different languages/markets
+- QUALITY: All songs should be currently popular on Instagram/TikTok Notes
+
+This gives users the best mix: mostly English (which is most popular globally) with some cultural diversity.`;
     }
   }
 

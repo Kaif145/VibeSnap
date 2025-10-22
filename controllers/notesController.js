@@ -5,11 +5,12 @@ const Helpers = require("../utils/helpers");
 class NotesController {
   static async getMoodBasedSongs(req, res, next) {
     try {
-      const { mood, language } = req.body;
+      const { mood, language, prevTitles, includeViral, viralData, enhancedMatching } = req.body;
       
       console.log(`🎵 Notes request - Mood: ${mood}, Language: ${language || 'mixed'}`);
+      console.log(`📊 Enhanced matching: ${enhancedMatching || false}, Viral data: ${includeViral || false}`);
 
-      const suggestions = await NotesService.getSongsForMood(mood, language);
+      const suggestions = await NotesService.getSongsForMood(mood, language, prevTitles);
       
       console.log(`✅ Generated ${suggestions.length} note songs for mood: ${mood}`);
 
@@ -17,10 +18,13 @@ class NotesController {
         suggestions,
         mood,
         language: language || 'mixed',
-        type: 'mood-based'
+        type: 'mood-based',
+        enhancedMatching: enhancedMatching || false,
+        viralData: includeViral || false
       }, null, {
         totalSongs: suggestions.length,
-        suggestedFor: 'instagram-notes'
+        suggestedFor: 'instagram-notes',
+        languageDistribution: language === 'mixed' ? '70% English, 30% Other Languages' : 'Single Language'
       }));
 
     } catch (error) {
@@ -57,22 +61,25 @@ class NotesController {
 
   static async getTrendingSongs(req, res, next) {
     try {
-      const { language } = req.query;
+      const { language, prevTitles, includeViral, viralData } = req.query;
       
       console.log(`📈 Trending notes request - Language: ${language || 'mixed'}`);
+      console.log(`📊 Viral data: ${includeViral || false}`);
 
-      const suggestions = await NotesService.getTrendingNoteSongs(language);
+      const suggestions = await NotesService.getTrendingNoteSongs(language, prevTitles);
       
       console.log(`✅ Generated ${suggestions.length} trending note songs`);
 
       res.json(Helpers.createResponse(true, {
         suggestions,
         language: language || 'mixed',
-        type: 'trending'
+        type: 'trending',
+        viralData: includeViral || false
       }, null, {
         totalSongs: suggestions.length,
         suggestedFor: 'instagram-notes',
-        trending: true
+        trending: true,
+        languageDistribution: language === 'mixed' ? '70% English, 30% Other Languages' : 'Single Language'
       }));
 
     } catch (error) {

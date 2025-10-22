@@ -1241,3 +1241,62 @@ h1 {
     padding: 0.7rem 0;
   }
 }
+
+/* Language Dropdown Styling */
+.language-dropdown {
+  margin-bottom: 1.5rem;
+}
+
+.language-dropdown label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.language-dropdown select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: white;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.language-dropdown select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.language-dropdown select:hover {
+  border-color: #667eea;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* Mobile responsive for language dropdown */
+@media (max-width: 768px) {
+  .language-dropdown select {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    padding-right: 35px;
+    background-size: 14px;
+    background-position: right 10px center;
+  }
+  
+  .language-dropdown label {
+    font-size: 0.9rem;
+  }
+}

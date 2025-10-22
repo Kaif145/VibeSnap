@@ -120,29 +120,31 @@
 
         <!-- Trending Language Form -->
         <div id="trendingLanguageForm" style="display: none">
-          <div class="language-options">
-            <label>Language Preference:</label>
-            <div class="language-radio-group" id="trendingLanguageRadioGroup">
-              <label>
-                <input
-                  type="radio"
-                  name="trending-language"
-                  value="mixed"
-                  checked
-                />
-                🌏 All (Mixed)
-              </label>
-              <button
-                type="button"
-                class="show-all-languages-btn"
-                id="showAllTrendingLanguagesBtn"
-              >
-                Show all languages
-              </button>
-            </div>
+          <div class="language-dropdown">
+            <label>Language:</label>
+            <select name="trending-language" id="trendingLanguageSelect">
+              <option value="mixed">🌏 All</option>
+              <option value="english">🇺🇸 English</option>
+              <option value="hindi">🇮🇳 Hindi</option>
+              <option value="punjabi">🛕 Punjabi</option>
+              <option value="bengali">🥭 Bengali</option>
+              <option value="k-pop">🎤 K-pop</option>
+              <option value="tamil">🕉 Tamil</option>
+              <option value="telugu">🎬 Telugu</option>
+              <option value="marathi">🍋 Marathi</option>
+              <option value="gujarati">🌶 Gujarati</option>
+              <option value="urdu">🌙 Urdu</option>
+              <option value="spanish">🇪🇸 Spanish</option>
+              <option value="french">🇫🇷 French</option>
+              <option value="arabic">🌴 Arabic</option>
+            </select>
           </div>
 
-          <button class="btn" onclick="getTrendingSongs()" id="getTrendingSongsBtn">
+          <button
+            class="btn"
+            onclick="getTrendingSongs()"
+            id="getTrendingSongsBtn"
+          >
             📈 Get Trending Songs
           </button>
         </div>
@@ -152,30 +154,28 @@
           <input
             type="text"
             id="moodInput"
-            placeholder="Tell us your vibe or a moment (e.g., It’s raining and I feel nostalgic)"
+            placeholder="Tell us your vibe or a moment (e.g., It's raining and I feel nostalgic)"
             class="preference-input"
             style="margin-bottom: 1rem"
           />
-          <div class="language-options">
-            <label>Language Preference:</label>
-            <div class="language-radio-group" id="languageRadioGroup">
-              <label>
-                <input
-                  type="radio"
-                  name="mood-language"
-                  value="mixed"
-                  checked
-                />
-                🌏 All (Mixed)
-              </label>
-              <button
-                type="button"
-                class="show-all-languages-btn"
-                id="showAllLanguagesBtn"
-              >
-                Show all languages
-              </button>
-            </div>
+          <div class="language-dropdown">
+            <label>Language:</label>
+            <select name="mood-language" id="moodLanguageSelect">
+              <option value="mixed">🌏 All</option>
+              <option value="english">🇺🇸 English</option>
+              <option value="hindi">🇮🇳 Hindi</option>
+              <option value="punjabi">🛕 Punjabi</option>
+              <option value="bengali">🥭 Bengali</option>
+              <option value="k-pop">🎤 K-pop</option>
+              <option value="tamil">🕉 Tamil</option>
+              <option value="telugu">🎬 Telugu</option>
+              <option value="marathi">🍋 Marathi</option>
+              <option value="gujarati">🌶 Gujarati</option>
+              <option value="urdu">🌙 Urdu</option>
+              <option value="spanish">🇪🇸 Spanish</option>
+              <option value="french">🇫🇷 French</option>
+              <option value="arabic">🌴 Arabic</option>
+            </select>
           </div>
 
           <button class="btn" onclick="getMoodSongs()" id="getMoodSongsBtn">

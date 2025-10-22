@@ -1,111 +1,7 @@
-// ========= Language Options Expand/Collapse =========
-const allLanguages = [
-  { value: "mixed", label: "🌏 All (Mixed)" },
-  { value: "english", label: "🇺🇸 English" },
-  { value: "hindi", label: "🇮🇳 Hindi" },
-  { value: "punjabi", label: "🛕 Punjabi" },
-  { value: "bengali", label: "🥭 Bengali" },
-  { value: "k-pop", label: "🎤 K-pop" },
-  { value: "tamil", label: "🕉 Tamil" },
-  { value: "telugu", label: "🎬 Telugu" },
-  { value: "marathi", label: "🍋 Marathi" },
-  { value: "gujarati", label: "🌶 Gujarati" },
-  { value: "urdu", label: "🌙 Urdu" },
-  { value: "spanish", label: "🇪🇸 Spanish" },
-  { value: "french", label: "🇫🇷 French" },
-  { value: "arabic", label: "🌴 Arabic" }
-];
-
+// ========= Language Dropdown Setup =========
 document.addEventListener('DOMContentLoaded', () => {
-  // Language expansion for mood form via caret
-  const moodGroup = document.getElementById("languageRadioGroup");
-  if (moodGroup) {
-    const renderMoodCollapsed = () => {
-      moodGroup.innerHTML = `
-        <label>
-          <input type="radio" name="mood-language" value="mixed" checked />
-          🌏 All (Mixed)
-          <span class="language-caret" aria-label="Show all languages"><i class="fas fa-chevron-down"></i></span>
-        </label>
-      `;
-      moodGroup.dataset.expanded = 'false';
-      const caret = moodGroup.querySelector('.language-caret');
-      if (caret) caret.addEventListener('click', onMoodCaretClick);
-    };
-
-    const onMoodCaretClick = function() {
-      // Prevent duplicate expansion
-      if (moodGroup.dataset.expanded === 'true') {
-        // Collapse back to only Mixed option
-        renderMoodCollapsed();
-        return;
-      }
-      // Expanded: keep a Mixed chip with caret + show other languages
-      const parts = [];
-      parts.push(`
-        <label>
-          <input type=\"radio\" name=\"mood-language\" value=\"mixed\" checked />
-          🌏 All (Mixed)
-          <span class=\"language-caret\" aria-label=\"Hide languages\"><i class=\"fas fa-chevron-down\"></i></span>
-        </label>
-      `);
-      allLanguages.filter(l => l.value !== 'mixed').forEach(lang => {
-        parts.push(`<label><input type=\"radio\" name=\"mood-language\" value=\"${lang.value}\"> ${lang.label}</label>`);
-      });
-      moodGroup.innerHTML = parts.join('');
-      const checked = document.querySelector('input[name="mood-language"]:checked');
-      if (!checked && moodGroup.querySelector('input')) moodGroup.querySelector('input').checked = true;
-      moodGroup.dataset.expanded = 'true';
-      const caret = moodGroup.querySelector('.language-caret');
-      if (caret) caret.addEventListener('click', onMoodCaretClick);
-    };
-    const initialCaret = moodGroup.querySelector('.language-caret');
-    if (initialCaret) initialCaret.addEventListener('click', onMoodCaretClick);
-  }
-
-  // Language expansion for trending form via caret
-  const trendingGroup = document.getElementById("trendingLanguageRadioGroup");
-  if (trendingGroup) {
-    const renderTrendingCollapsed = () => {
-      trendingGroup.innerHTML = `
-        <label>
-          <input type=\"radio\" name=\"trending-language\" value=\"mixed\" checked />
-          🌏 All (Mixed)
-          <span class=\"language-caret\" aria-label=\"Show all languages\"><i class=\"fas fa-chevron-down\"></i></span>
-        </label>
-      `;
-      trendingGroup.dataset.expanded = 'false';
-      const caret = trendingGroup.querySelector('.language-caret');
-      if (caret) caret.addEventListener('click', onTrendingCaretClick);
-    };
-
-    const onTrendingCaretClick = function() {
-      if (trendingGroup.dataset.expanded === 'true') {
-        renderTrendingCollapsed();
-        return;
-      }
-      // Expanded: keep a Mixed chip with caret + show other languages
-      const parts = [];
-      parts.push(`
-        <label>
-          <input type=\"radio\" name=\"trending-language\" value=\"mixed\" checked />
-          🌏 All (Mixed)
-          <span class=\"language-caret\" aria-label=\"Hide languages\"><i class=\"fas fa-chevron-down\"></i></span>
-        </label>
-      `);
-      allLanguages.filter(l => l.value !== 'mixed').forEach(lang => {
-        parts.push(`<label><input type=\"radio\" name=\"trending-language\" value=\"${lang.value}\"> ${lang.label}</label>`);
-      });
-      trendingGroup.innerHTML = parts.join('');
-      const checked = document.querySelector('input[name="trending-language"]:checked');
-      if (!checked && trendingGroup.querySelector('input')) trendingGroup.querySelector('input').checked = true;
-      trendingGroup.dataset.expanded = 'true';
-      const caret = trendingGroup.querySelector('.language-caret');
-      if (caret) caret.addEventListener('click', onTrendingCaretClick);
-    };
-    const initialTrendingCaret = trendingGroup.querySelector('.language-caret');
-    if (initialTrendingCaret) initialTrendingCaret.addEventListener('click', onTrendingCaretClick);
-  }
+  // No complex language expansion needed - using simple dropdowns
+  console.log('Language dropdowns initialized');
 });
 
 // ========= Photo Upload Functionality =========
@@ -364,7 +260,8 @@ function showTrendingLanguageForm() {
 
 async function getMoodSongs() {
   const mood = document.getElementById('moodInput').value.trim();
-  const language = document.querySelector('input[name="mood-language"]:checked').value;
+  const languageSelect = document.getElementById('moodLanguageSelect');
+  const language = languageSelect ? languageSelect.value : 'mixed';
 
   if (!mood) {
     alert('Please tell us how you\'re feeling!');
@@ -463,8 +360,8 @@ async function getMoreMoodSongs() {
 }
 
 async function getTrendingSongs() {
-  const languageElement = document.querySelector('input[name="trending-language"]:checked');
-  const language = languageElement ? languageElement.value : 'mixed';
+  const languageSelect = document.getElementById('trendingLanguageSelect');
+  const language = languageSelect ? languageSelect.value : 'mixed';
 
   trendingLastLanguage = language;
   trendingShownTitles = [];
